@@ -1,0 +1,13 @@
+{
+  "name": "turunanarise-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -c \"cyan,magenta\" -n \"backend,frontend\" \"cd backend && php artisan serve\" \"cd frontend && npm run dev\"",
+    "install:all": "cd backend && composer install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

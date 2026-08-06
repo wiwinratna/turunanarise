@@ -1,0 +1,11 @@
+const fs = require('fs');
+let c = fs.readFileSync('src/app/components/pages/FormsPage.tsx', 'utf8');
+c = c.replace(/padding: "9px 12px"/g, 'padding: "7px 10px"');
+c = c.replace(/fontSize: 13/g, 'fontSize: 12');
+c = c.replace(/marginBottom: 6/g, 'marginBottom: 4');
+c = c.replace(/gap: 32/g, 'gap: 20');
+c = c.replace(/padding: "32px 40px"/g, 'padding: "24px 32px"');
+c = c.replace(/marginBottom: 16/g, 'marginBottom: 10');
+c = c.replace(/gap-4/g, 'gap-3');
+fs.writeFileSync('src/app/components/pages/FormsPage.tsx', c);
+console.log('Fixed styles in FormsPage.tsx');
