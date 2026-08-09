@@ -15,6 +15,14 @@ use App\Http\Controllers\Api\ChatController;
 
 use App\Http\Controllers\Api\TicketController;
 
+Route::get('/storage/{path}', function (string $path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+    return response()->file($filePath);
+})->where('path', '.*');
+
 // Route::post('/auth/register', [AuthController::class, 'register']); // Disabled public registration
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
