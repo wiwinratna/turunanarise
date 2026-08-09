@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useApp, MasterCategory, MasterFunction, MasterCountry } from "../AppContext";
 import {
@@ -131,7 +131,7 @@ function CountriesTab({ theme }: { theme: any }) {
         setCountries(countries.map(c => c.id === editId ? updated : c));
         toast.success("Country updated");
       } else {
-        const newCo = { ...form, id: form.code, flag: form.code, eventId: activeEventId || undefined }; // Use code as ID and fallback flag
+        const newCo = { ...form, id: `CTRY-${Date.now()}`, flag: form.code, eventId: activeEventId || undefined }; // Changed ID to not collide across events
         const created = await apiCreateCountry(newCo);
         setCountries([...countries, created]);
         toast.success("Country created");
@@ -393,7 +393,7 @@ function CategoriesTab({ theme }: { theme: any }) {
         setCategories(categories.map(c => c.id === editId ? res : c));
         toast.success("Category updated");
       } else {
-        const payload = { ...form, id: `CAT-${Date.now()}`, event_id: activeEventId };
+        const payload = { ...form, id: `CAT-${Date.now()}`, eventId: activeEventId };
         const res = await apiCreateCategory(payload as any);
         setCategories([...categories, res]);
         toast.success("Category created");
@@ -457,7 +457,7 @@ function CategoriesTab({ theme }: { theme: any }) {
 
 // ─── FUNCTIONS TAB ────────────────────────────────────────────────────────────
 function FunctionsTab({ theme }: { theme: any }) {
-  const { functions, setFunctions, activeEventId, events } = useApp();
+  const { functions, setFunctions, categories, activeEventId, events } = useApp();
   const currentEvent = events.find(e => e.id === activeEventId);
   const prefix = currentEvent ? currentEvent.eventCode + "-" : "";
   const [search, setSearch] = useState("");
@@ -482,14 +482,14 @@ function FunctionsTab({ theme }: { theme: any }) {
   const openEdit = (c: MasterFunction) => { setForm(c); setEditId(c.id); setShowForm(true); };
 
   const save = async () => {
-    if (!form.name || !form.code) return toast.error("Please fill name and code");
+    if (!form.name || !form.code || !form.categoryId) return toast.error("Please fill name, code, and category");
     try {
       if (editId) {
         const res = await apiUpdateFunction(editId, form);
         setFunctions(functions.map(c => c.id === editId ? res : c));
         toast.success("Function updated");
       } else {
-        const payload = { ...form, id: `FUNC-${Date.now()}`, event_id: activeEventId };
+        const payload = { ...form, id: `FUNC-${Date.now()}`, eventId: activeEventId };
         const res = await apiCreateFunction(payload as any);
         setFunctions([...functions, res]);
         toast.success("Function created");
@@ -536,6 +536,13 @@ function FunctionsTab({ theme }: { theme: any }) {
           <SlidePanel title={editId ? "Edit Function" : "Add Function"} onClose={() => setShowForm(false)} theme={theme}>
             <Field label="Function Code" value={form.code ?? ""} onChange={v => setForm(f => ({ ...f, code: v }))} disabled={!!editId} />
             <Field label="Function Name" value={form.name ?? ""} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="e.g. Speaker" />
+            <div>
+              <label style={labelStyle(theme)}>CATEGORY</label>
+              <select value={form.categoryId ?? ""} onChange={e => setForm(f => ({ ...f, categoryId: e.target.value }))} style={selectStyle(theme)}>
+                <option value="" disabled>Select a category</option>
+                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
             <ActiveToggle value={!!form.active} onChange={v => setForm(f => ({ ...f, active: v }))} theme={theme} />
             <PanelActions onSave={save} onCancel={() => setShowForm(false)} theme={theme} />
           </SlidePanel>
@@ -840,7 +847,8 @@ export function MasterDataPage() {
     participants: participants?.length || 0,
   };
 
-  const visibleTabs = isSuperadminMode ? TABS.filter(t => t.id === "countries") : TABS;
+  let visibleTabs = isSuperadminMode ? TABS.filter(t => t.id === "countries") : TABS;
+  if (currentUser?.role === "admin") visibleTabs = visibleTabs.filter(t => t.id !== "participants");
 
   return (
     <div style={{ padding: "24px 28px", maxWidth: 1200, display: "flex", flexDirection: "column", gap: 20 }}>

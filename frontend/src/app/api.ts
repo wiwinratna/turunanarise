@@ -3,7 +3,7 @@
  * Connects to Laravel backend API.
  */
 
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.PROD ? "https://arise2.poyekterapan1.com/api/api" : "/api";
 const TOKEN_KEY = "cardforge_token";
 
 // ─── Token helpers ──────────────────────────────────────────────────────────
