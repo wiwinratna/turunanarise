@@ -227,12 +227,10 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
+            className="fixed z-[10000] w-full h-[100dvh] bottom-0 right-0 md:w-[360px] md:h-[500px] md:bottom-6 md:right-6 md:rounded-2xl flex flex-col overflow-hidden"
             style={{
-              position: "fixed", bottom: 24, right: 24, zIndex: 10000,
-              width: 360, height: 500, borderRadius: 16,
               background: theme.cardColor, border: `1px solid ${theme.borderColor}`,
               boxShadow: "0 12px 32px rgba(0,0,0,0.15)",
-              display: "flex", flexDirection: "column", overflow: "hidden"
             }}
           >
             {/* Header */}

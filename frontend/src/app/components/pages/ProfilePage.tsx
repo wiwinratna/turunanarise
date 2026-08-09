@@ -183,7 +183,7 @@ export function ProfilePage() {
         )}
 
         {/* Settings Tabs */}
-        <div style={{ display: "flex", gap: 16, borderBottom: `1px solid ${theme.borderColor}`, marginBottom: 24 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, borderBottom: `1px solid ${theme.borderColor}`, marginBottom: 24 }}>
           <button onClick={() => setActiveTab("profile")} style={{ padding: "12px 16px", background: "none", border: "none", borderBottom: `2px solid ${activeTab === "profile" ? theme.primaryColor : "transparent"}`, color: activeTab === "profile" ? theme.primaryColor : theme.textMutedColor, fontWeight: 600, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
             <User size={16} /> Edit Profile
           </button>

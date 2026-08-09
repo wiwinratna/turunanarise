@@ -133,13 +133,13 @@ export function DashboardHome() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
                 <h3 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 15, fontWeight: 700, color: theme.textColor, margin: 0 }}>Demographics Overview</h3>
               </div>
-              <div style={{ display: "flex", gap: 20, flex: 1 }}>
-                <div style={{ flex: 1, padding: 24, borderRadius: R * 1.5, background: "rgba(14, 165, 233, 0.08)", border: "1px solid rgba(14, 165, 233, 0.15)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 20, flex: 1 }}>
+                <div style={{ flex: "1 1 200px", padding: 24, borderRadius: R * 1.5, background: "rgba(14, 165, 233, 0.08)", border: "1px solid rgba(14, 165, 233, 0.15)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                   <div style={{ fontSize: 42, fontWeight: 700, color: "#0ea5e9", fontFamily: "'Poppins', sans-serif", lineHeight: 1 }}>{cards.filter(c => c.participant_data?.gender?.toLowerCase() === 'male').length}</div>
                   <div style={{ fontSize: 14, color: theme.textColor, fontWeight: 600, marginTop: 12 }}>Male Participants</div>
                   <div style={{ fontSize: 11, color: theme.textMutedColor, marginTop: 4 }}>{isSuperadmin ? `from ${events.length} events` : `from this event`}</div>
                 </div>
-                <div style={{ flex: 1, padding: 24, borderRadius: R * 1.5, background: "rgba(236, 72, 153, 0.08)", border: "1px solid rgba(236, 72, 153, 0.15)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ flex: "1 1 200px", padding: 24, borderRadius: R * 1.5, background: "rgba(236, 72, 153, 0.08)", border: "1px solid rgba(236, 72, 153, 0.15)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                   <div style={{ fontSize: 42, fontWeight: 700, color: "#ec4899", fontFamily: "'Poppins', sans-serif", lineHeight: 1 }}>{cards.filter(c => c.participant_data?.gender?.toLowerCase() === 'female').length}</div>
                   <div style={{ fontSize: 14, color: theme.textColor, fontWeight: 600, marginTop: 12 }}>Female Participants</div>
                   <div style={{ fontSize: 11, color: theme.textMutedColor, marginTop: 4 }}>{isSuperadmin ? `from ${events.length} events` : `from this event`}</div>

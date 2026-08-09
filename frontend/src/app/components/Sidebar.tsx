@@ -7,8 +7,10 @@ import {
   Users, CalendarDays, Shield, ShieldCheck, User, Globe
 } from "lucide-react";
 
+import { useIsMobile } from "./ui/use-mobile";
+
 export function Sidebar() {
-  const { page, setPage, theme, sidebarLogo, setSidebarLogo, sidebarCollapsed, setSidebarCollapsed, setIsLoggedIn, setCurrentUser, currentUser, events } = useApp();
+  const { page, setPage, theme, sidebarCollapsed, setSidebarCollapsed, sidebarLogo, setSidebarLogo, currentUser, setCurrentUser, setIsLoggedIn, events } = useApp();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const getBrandName = () => {
@@ -78,7 +80,12 @@ export function Sidebar() {
     setPage("login");
   };
 
-  const collapsed = sidebarCollapsed;
+  const isMobile = useIsMobile();
+  const collapsed = isMobile ? false : sidebarCollapsed;
+
+  if (isMobile && sidebarCollapsed) {
+    return null; // hide completely on mobile when collapsed
+  }
 
   const navBtn = (active: boolean): React.CSSProperties => ({
     display: "flex", alignItems: "center", gap: 10,
@@ -95,15 +102,25 @@ export function Sidebar() {
 
 
   return (
-    <motion.aside
-      animate={{ width: collapsed ? 64 : 228 }}
-      transition={{ duration: 0.22, ease: "easeInOut" }}
-      style={{
-        display: "flex", flexDirection: "column", height: "100%",
-        overflow: "hidden", flexShrink: 0,
-        background: theme.sidebarColor,
-        borderRight: `1px solid ${theme.borderColor}`,
-      }}>
+    <>
+      {isMobile && !sidebarCollapsed && (
+        <div 
+          onClick={() => setSidebarCollapsed(true)}
+          style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", zIndex: 40 }}
+        />
+      )}
+      <motion.aside
+        animate={{ width: collapsed ? 64 : 260 }}
+        transition={{ duration: 0.22, ease: "easeInOut" }}
+        style={{
+          display: "flex", flexDirection: "column", height: "100%",
+          overflow: "hidden", flexShrink: 0,
+          background: theme.sidebarColor,
+          borderRight: `1px solid ${theme.borderColor}`,
+          position: isMobile ? "fixed" : "relative",
+          zIndex: 50,
+          left: 0, top: 0, bottom: 0,
+        }}>
 
       {/* Logo / Brand */}
       <div style={{
@@ -244,6 +261,6 @@ export function Sidebar() {
         </div>
       </div>
     </motion.aside>
+    </>
   );
-
 }

@@ -420,6 +420,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [page, setPage] = useState<Page>("login");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [users, setUsers] = useState<AuthUser[]>([]);
@@ -480,7 +481,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     } catch(e) {}
   }, [currentUser, getLogoKey]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   const [cardElements, setCardElements] = useState<CardElement[]>([]);
   const [formData, setFormData] = useState<FormData>({
     title: "", firstName: "", lastName: "", gender: "", dateOfBirth: "", picture: "",

@@ -483,9 +483,9 @@ export function CardEditorPage() {
   const sortedElements = [...cardElements].sort((a, b) => a.layer - b.layer);
 
   return (
-    <div style={{ display: "flex", height: "100%", overflow: "hidden" }}>
+    <div className="flex flex-col-reverse md:flex-row h-full overflow-hidden">
       {/* Left Panel */}
-      <div className="flex flex-col flex-shrink-0 overflow-y-auto" style={{ width: 220, borderRight: "1px solid rgba(255,255,255,0.06)", background: theme.cardColor }}>
+      <div className="flex flex-col flex-shrink-0 w-full md:w-[220px] overflow-y-auto max-h-[50vh] md:max-h-full" style={{ borderRight: "1px solid rgba(255,255,255,0.06)", borderTop: "1px solid rgba(255,255,255,0.06)", background: theme.cardColor }}>
         {/* Panel Tabs */}
         <div className="flex" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           {(["elements", "properties", "layers"] as const).map(p => (
