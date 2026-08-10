@@ -20,11 +20,16 @@ export function clearToken() {
 // ─── Generic fetch wrapper ──────────────────────────────────────────────────
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const token = getToken();
+  const isFormData = options.body instanceof FormData;
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     "Accept": "application/json",
     ...(options.headers as Record<string, string>),
   };
+  
+  if (!isFormData && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
+
   if (token) headers["Authorization"] = `Bearer ${token}`;
   
   const res = await fetch(`${BASE_URL}${url}`, { ...options, headers });
