@@ -106,7 +106,16 @@ export async function apiUpdateProfile(payload: { name: string; email: string; a
     method: "PUT",
     body: JSON.stringify(payload),
   });
-  return res;
+  const rawEventId = res.event_id;
+  return {
+    id: res.id,
+    name: res.name,
+    email: res.email,
+    role: res.role,
+    eventId: Array.isArray(rawEventId) ? rawEventId : rawEventId ? [rawEventId] : null,
+    avatar: res.avatar,
+    active: !!res.active,
+  };
 }
 
 export async function apiUpdatePassword(payload: { current_password: string; new_password: string; new_password_confirmation: string }): Promise<{ message: string }> {
