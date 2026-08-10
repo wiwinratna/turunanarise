@@ -468,8 +468,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       } else {
         const logoKey = getLogoKey(currentUser);
         const l = localStorage.getItem(logoKey);
-        setSidebarLogoState(l);
-        if (l) localStorage.setItem("cardforge_last_logo", l);
+        if (l) {
+          setSidebarLogoState(l);
+          localStorage.setItem("cardforge_last_logo", l);
+        } else {
+          setSidebarLogoState(getInitialLogo());
+        }
       }
       
       if (currentUser?.theme) {
@@ -484,10 +488,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             setThemeState(parsed);
             localStorage.setItem("cardforge_last_theme", savedTheme);
           } else {
-            setThemeState(PRESET_THEMES.midnight);
+            setThemeState(getInitialTheme());
           }
         } else {
-          setThemeState(PRESET_THEMES.midnight);
+          setThemeState(getInitialTheme());
         }
       }
     } catch(e) {}
