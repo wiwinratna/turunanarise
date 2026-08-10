@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ChatController;
 
 use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\SettingsController;
 
 Route::get('/storage/{path}', function (string $path) {
     $filePath = storage_path('app/public/' . $path);
@@ -25,6 +26,9 @@ Route::get('/storage/{path}', function (string $path) {
 
 // Route::post('/auth/register', [AuthController::class, 'register']); // Disabled public registration
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+
+// Public settings
+Route::get('/settings/branding', [SettingsController::class, 'getBranding']);
 
 // ─── Protected routes (requires Sanctum token) ──────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
@@ -43,6 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dashboard
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+
+    // Settings
+    Route::post('/settings/branding', [SettingsController::class, 'updateBranding']);
 
     // Superadmin-only user management (except update for self which is handled by policy)
     Route::apiResource('/users', UserController::class);

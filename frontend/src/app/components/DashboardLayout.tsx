@@ -11,6 +11,7 @@ import { MasterDataPage } from "./pages/MasterDataPage";
 import { UsersPage } from "./pages/UsersPage";
 import { EventsPage } from "./pages/EventsPage";
 import { SuperadminEventsPage } from "./pages/SuperadminEventsPage";
+import { LoginBrandingPage } from "./pages/LoginBrandingPage";
 import { AnimatePresence, motion } from "motion/react";
 
 export function DashboardLayout() {
@@ -29,6 +30,7 @@ export function DashboardLayout() {
       case "users":          return <UsersPage />;
       case "events":         return <EventsPage />;
       case "superadmin-events": return <SuperadminEventsPage />;
+      case "login-branding": return <LoginBrandingPage />;
       default:               return <DashboardHome />;
     }
   };

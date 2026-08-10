@@ -8,7 +8,17 @@ import { toast } from "sonner";
 const R = 6;
 
 export function LoginPage() {
-  const { setPage, setIsLoggedIn, setCurrentUser, setActiveEventId } = useApp();
+  const { setPage, setIsLoggedIn, setCurrentUser, setActiveEventId, brandingSettings } = useApp();
+
+  const titleText = brandingSettings?.title || "Design without limits.";
+  const titleWords = titleText.split(" ");
+  const firstTitlePart = titleWords.length > 1 ? titleWords.slice(0, titleWords.length - 2).join(" ") + (titleWords.length > 2 ? " " : "") + titleWords[titleWords.length - 2] : "";
+  const lastTitlePart = titleWords.length > 1 ? titleWords[titleWords.length - 1] : titleText;
+  
+  const layoutStyle = brandingSettings?.layout || "split-right";
+  const primaryColor = brandingSettings?.primaryColor || "#7c5cfc";
+  const bgColor = brandingSettings?.backgroundColor || "#050509";
+  const panelColor = brandingSettings?.panelColor || "#0a0a10";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,26 +51,32 @@ export function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", fontFamily: "'Inter', sans-serif", background: "#050509" }}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: layoutStyle === "split-left" ? "row-reverse" : "row", fontFamily: "'Inter', sans-serif", background: bgColor }}>
       {/* Left panel */}
-      <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
-        style={{ background: "#0a0a10" }}>
-        {/* Subtle mesh gradient background */}
-        <div className="absolute inset-0 opacity-40"
-          style={{
-            background: "radial-gradient(circle at 15% 50%, rgba(124, 92, 252, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.15), transparent 25%)",
-            filter: "blur(60px)"
-          }} />
+      {layoutStyle !== "centered" && (
+        <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
+          style={{ background: panelColor }}>
+          {/* Subtle mesh gradient background */}
+          {brandingSettings?.backgroundImage ? (
+            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brandingSettings.backgroundImage})`, opacity: 0.6 }} />
+          ) : (
+            <div className="absolute inset-0 opacity-40"
+              style={{
+                background: `radial-gradient(circle at 15% 50%, ${primaryColor}25, transparent 25%), radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.15), transparent 25%)`,
+                filter: "blur(60px)"
+              }} />
+          )}
 
         <div className="relative z-10 flex flex-col h-full" style={{ padding: "48px 64px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "auto" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #7c5cfc, #5a3dcc)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(124, 92, 252, 0.3)" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${primaryColor}, #5a3dcc)`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 12px ${primaryColor}40` }}>
               <Layers size={16} color="#fff" />
             </div>
             <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 18, color: "#fff", letterSpacing: "-0.02em" }}>Arise 2</span>
           </div>
 
-          <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+          {!brandingSettings?.backgroundImage && (
+            <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
             {/* Blue Ring */}
             <motion.div
               style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", border: "2px solid #3b82f6", opacity: 0.35, boxShadow: "0 0 60px rgba(59, 130, 246, 0.2), inset 0 0 30px rgba(59, 130, 246, 0.2)" }}
@@ -97,36 +113,40 @@ export function LoginPage() {
               initial={{ top: "45%", left: "40%" }}
             />
           </div>
+          )}
 
           <div style={{ marginBottom: "auto", paddingTop: "10vh", position: "relative", zIndex: 1 }}>
             <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 56, fontWeight: 300, color: "#ffffff", lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 24 }}>
-              Design<br />
-              <span style={{ fontWeight: 600, background: "linear-gradient(90deg, #a78bfa, #c4b5fd)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>without limits.</span>
+              {firstTitlePart}<br />
+              <span style={{ fontWeight: 600, color: primaryColor }}>{lastTitlePart}</span>
             </h2>
             <p style={{ color: "#8b8b9f", fontSize: 16, lineHeight: 1.6, maxWidth: 320, fontWeight: 400 }}>
-              The modern workspace for premium digital card creation.
+              {brandingSettings?.subtitle || "The modern workspace for premium digital card creation."}
             </p>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Right panel — auth form */}
-      <div style={{ flex: "0 0 auto", width: "100%", maxWidth: 480, display: "flex", alignItems: "center", justifyContent: "center", padding: "32px 48px", background: "#050509" }}>
-        <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }} style={{ width: "100%", maxWidth: 360 }}>
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div style={{ width: 30, height: 30, borderRadius: R, background: "#7c5cfc", display: "flex", alignItems: "center", justifyContent: "center" }}><Layers size={14} color="#fff" /></div>
-            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: 16, color: "#f0f0fa" }}>Arise 2</span>
+      <div style={{ flex: "0 0 auto", width: "100%", maxWidth: layoutStyle === "centered" ? "none" : 480, display: "flex", alignItems: "center", justifyContent: "center", padding: "32px 48px", background: layoutStyle === "centered" ? "transparent" : bgColor }}>
+        <motion.div initial={{ opacity: 0, y: layoutStyle === "centered" ? 16 : 0, x: layoutStyle === "centered" ? 0 : (layoutStyle === "split-left" ? -16 : 16) }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.35 }} style={{ width: "100%", maxWidth: 360, background: layoutStyle === "centered" ? panelColor : "transparent", padding: layoutStyle === "centered" ? "40px" : 0, borderRadius: layoutStyle === "centered" ? 16 : 0, border: layoutStyle === "centered" ? "1px solid rgba(255,255,255,0.1)" : "none" }}>
+          {/* Mobile logo or Centered Logo */}
+          <div className={`flex items-center gap-3 mb-8 ${layoutStyle === "centered" ? "justify-center mb-12" : "lg:hidden"}`}>
+            <div style={{ width: layoutStyle === "centered" ? 40 : 30, height: layoutStyle === "centered" ? 40 : 30, borderRadius: R, background: primaryColor, display: "flex", alignItems: "center", justifyContent: "center" }}><Layers size={layoutStyle === "centered" ? 20 : 14} color="#fff" /></div>
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: layoutStyle === "centered" ? 24 : 16, color: "#f0f0fa" }}>Arise 2</span>
           </div>
 
-          <div style={{ marginBottom: 32 }}>
-            <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 600, color: "#ffffff", letterSpacing: "-0.02em", marginBottom: 8 }}>
-              Welcome back
-            </h1>
-            <p style={{ fontSize: 14, color: "#8b8b9f", margin: 0, fontWeight: 400 }}>
-              Sign in to your workspace
-            </p>
-          </div>
+          {layoutStyle !== "centered" && (
+            <div style={{ marginBottom: 32 }}>
+              <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 600, color: "#ffffff", letterSpacing: "-0.02em", marginBottom: 8 }}>
+                Welcome back
+              </h1>
+              <p style={{ fontSize: 14, color: "#8b8b9f", margin: 0, fontWeight: 400 }}>
+                Sign in to your workspace
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
@@ -153,13 +173,17 @@ export function LoginPage() {
               </div>
             </div>
 
-            <motion.button type="submit" whileTap={{ scale: 0.98 }}
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "12px 0", borderRadius: 8, background: loading ? "rgba(255,255,255,0.05)" : "#ffffff", color: loading ? "#8b8b9f" : "#000000", border: "none", cursor: loading ? "not-allowed" : "pointer", fontSize: 14, fontWeight: 600, marginTop: 12, transition: "background 0.2s" }}>
-              {loading
-                ? <div style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.2)", borderTopColor: "#fff", borderRadius: "50%" }} className="animate-spin" />
-                : "Sign In"
-              }
-            </motion.button>
+            <button type="submit" disabled={loading}
+              style={{
+                width: "100%", padding: "12px", background: primaryColor, color: "#fff",
+                border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600,
+                cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.8 : 1,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                marginTop: 8, transition: "background 0.2s"
+              }}>
+              {loading ? "Signing in..." : "Sign In"}
+              {!loading && <ArrowRight size={16} />}
+            </button>
           </form>
           <div style={{ marginTop: 32, textAlign: "center" }}>
             <p style={{ fontSize: 13, color: "#7070a0", margin: 0, fontWeight: 400 }}>

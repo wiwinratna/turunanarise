@@ -4,7 +4,7 @@ import { useApp, Page } from "./AppContext";
 import {
   LayoutDashboard, FileText, CreditCard, Palette, History,
   ChevronLeft, ChevronRight, Upload, X, LogOut, Database, Layers,
-  Users, CalendarDays, Shield, ShieldCheck, User, Globe
+  Users, CalendarDays, Shield, ShieldCheck, User, Globe, LayoutTemplate
 } from "lucide-react";
 
 import { useIsMobile } from "./ui/use-mobile";
@@ -46,7 +46,8 @@ export function Sidebar() {
         ...(isSuperadmin 
           ? [
               { id: "superadmin-countries" as Page, label: "Countries", icon: <Globe size={16} /> },
-              { id: "users" as Page, label: "Users", icon: <Users size={16} /> }
+              { id: "users" as Page, label: "Users", icon: <Users size={16} /> },
+              { id: "login-branding" as Page, label: "Login Branding", icon: <LayoutTemplate size={16} /> }
             ]
           : [
               { id: "master-data" as Page, label: "Master Data", icon: <Database size={16} /> }

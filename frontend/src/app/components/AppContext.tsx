@@ -3,13 +3,13 @@ import type { AuthUser, EventData, MasterCategory, MasterFunction, MasterCountry
 import {
   getToken, clearToken, apiGetMe, apiGetEvents, apiGetCategories,
   apiGetFunctions, apiGetCountries, apiGetCards, apiGetUsers, apiCreateCard,
-  apiGetParticipants
+  apiGetParticipants, BrandingSettings, apiGetBrandingSettings
 } from "../api";
 import { toast } from "sonner";
 
 export type UserRole = "superadmin" | "admin";
 
-export type Page = "login" | "register" | "dashboard" | "forms" | "card-editor" | "theme-settings" | "profile" | "master-data" | "users" | "events" | "superadmin-events" | "superadmin-countries";
+export type Page = "login" | "register" | "dashboard" | "forms" | "card-editor" | "theme-settings" | "profile" | "master-data" | "users" | "events" | "superadmin-events" | "superadmin-countries" | "login-branding";
 
 export interface ThemeConfig {
   isDark: boolean;
@@ -299,6 +299,9 @@ interface AppContextType {
   setUsers: (u: AuthUser[]) => void;
   events: EventData[];
   setEvents: (e: EventData[]) => void;
+  // Branding
+  brandingSettings: BrandingSettings | null;
+  setBrandingSettings: (s: BrandingSettings | null) => void;
   // Theme
   theme: ThemeConfig;
   setTheme: (t: ThemeConfig) => void;
@@ -434,6 +437,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [events, setEvents] = useState<EventData[]>([]);
+  const [brandingSettings, setBrandingSettings] = useState<BrandingSettings | null>(null);
   const [theme, setThemeState] = useState<ThemeConfig>(getInitialTheme);
 
   const getThemeKey = useCallback((user: AuthUser | null) => {
@@ -598,6 +602,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     const initAuth = async () => {
+      try {
+        const branding = await apiGetBrandingSettings();
+        setBrandingSettings(branding);
+      } catch (e) {
+        console.error("Failed to load branding settings", e);
+      }
+
       const token = getToken();
       if (token) {
         try {
@@ -716,6 +727,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       currentUser, setCurrentUser,
       users, setUsers,
       events, setEvents,
+      brandingSettings, setBrandingSettings,
       theme, setTheme,
       sidebarLogo, setSidebarLogo,
       sidebarCollapsed, setSidebarCollapsed,

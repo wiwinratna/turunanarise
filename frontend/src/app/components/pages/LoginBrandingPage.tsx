@@ -1,0 +1,334 @@
+import React, { useState, useEffect } from "react";
+import { useApp } from "../AppContext";
+import { apiGetBrandingSettings, apiUpdateBrandingSettings, BrandingSettings } from "../../api";
+import { toast } from "sonner";
+import { Save, Layers, LayoutTemplate, Palette, Image as ImageIcon, Type, Monitor } from "lucide-react";
+
+export function LoginBrandingPage() {
+  const { theme } = useApp();
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
+
+  const [settings, setSettings] = useState<BrandingSettings>({
+    layout: "split-right",
+    title: "Design without limits.",
+    subtitle: "The modern workspace for premium digital card creation.",
+    primaryColor: "#7c5cfc",
+    backgroundColor: "#050509",
+    panelColor: "#0a0a10",
+    backgroundImage: "",
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await apiGetBrandingSettings();
+        if (data && Object.keys(data).length > 0) {
+          setSettings(prev => ({ ...prev, ...data }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch branding settings", err);
+      } finally {
+        setFetching(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleChange = (field: keyof BrandingSettings, value: string) => {
+    setSettings(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await apiUpdateBrandingSettings(settings);
+      toast.success("Branding settings saved successfully.");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save branding settings");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const inputClass = `w-full px-4 py-2.5 rounded-lg border outline-none transition-all`;
+
+  if (fetching) {
+    return (
+      <div className="flex-1 p-8 flex items-center justify-center" style={{ background: theme.backgroundColor }}>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: theme.primaryColor }}></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex-1 overflow-auto" style={{ background: theme.backgroundColor }}>
+      <div className="max-w-6xl mx-auto p-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold mb-2" style={{ color: theme.textColor }}>Login Page Branding</h1>
+            <p style={{ color: theme.textMutedColor }}>Customize the appearance of the public login page.</p>
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all"
+            style={{ 
+              background: theme.primaryColor, 
+              color: "#fff",
+              opacity: loading ? 0.7 : 1 
+            }}
+          >
+            <Save size={18} />
+            {loading ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            {/* Layout Section */}
+            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                <LayoutTemplate size={20} style={{ color: theme.primaryColor }} />
+                Layout Style
+              </h2>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { id: "split-right", label: "Form Right" },
+                  { id: "split-left", label: "Form Left" },
+                  { id: "centered", label: "Centered" }
+                ].map(opt => (
+                  <button
+                    key={opt.id}
+                    onClick={() => handleChange("layout", opt.id)}
+                    className="flex flex-col items-center justify-center p-4 rounded-lg border transition-all"
+                    style={{ 
+                      borderColor: settings.layout === opt.id ? theme.primaryColor : theme.borderColor,
+                      background: settings.layout === opt.id ? `${theme.primaryColor}15` : "transparent"
+                    }}
+                  >
+                    <div className="w-full h-16 bg-white/5 rounded mb-3 flex items-center p-1" style={{ border: `1px solid ${theme.borderColor}` }}>
+                      {opt.id === "split-right" && (
+                        <>
+                          <div className="h-full w-2/3 bg-white/10 rounded-l"></div>
+                          <div className="h-full w-1/3 bg-white/20 rounded-r"></div>
+                        </>
+                      )}
+                      {opt.id === "split-left" && (
+                        <>
+                          <div className="h-full w-1/3 bg-white/20 rounded-l"></div>
+                          <div className="h-full w-2/3 bg-white/10 rounded-r"></div>
+                        </>
+                      )}
+                      {opt.id === "centered" && (
+                        <div className="h-full w-full bg-white/5 flex items-center justify-center">
+                          <div className="h-3/4 w-1/2 bg-white/20 rounded"></div>
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-sm font-medium" style={{ color: settings.layout === opt.id ? theme.primaryColor : theme.textMutedColor }}>
+                      {opt.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Typography Section */}
+            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                <Type size={20} style={{ color: theme.primaryColor }} />
+                Content
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Hero Title</label>
+                  <input
+                    type="text"
+                    value={settings.title || ""}
+                    onChange={(e) => handleChange("title", e.target.value)}
+                    className={inputClass}
+                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    placeholder="E.g. Design without limits."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Hero Subtitle</label>
+                  <textarea
+                    value={settings.subtitle || ""}
+                    onChange={(e) => handleChange("subtitle", e.target.value)}
+                    className={inputClass}
+                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor, minHeight: "80px" }}
+                    placeholder="E.g. The modern workspace for premium digital card creation."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Colors Section */}
+            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                <Palette size={20} style={{ color: theme.primaryColor }} />
+                Colors
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Primary Color (Buttons)</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={settings.primaryColor || "#7c5cfc"}
+                      onChange={(e) => handleChange("primaryColor", e.target.value)}
+                      className="h-10 w-10 rounded border-0 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={settings.primaryColor || ""}
+                      onChange={(e) => handleChange("primaryColor", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Background Color</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={settings.backgroundColor || "#050509"}
+                      onChange={(e) => handleChange("backgroundColor", e.target.value)}
+                      className="h-10 w-10 rounded border-0 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={settings.backgroundColor || ""}
+                      onChange={(e) => handleChange("backgroundColor", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    />
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Panel/Form Background Color</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={settings.panelColor || "#0a0a10"}
+                      onChange={(e) => handleChange("panelColor", e.target.value)}
+                      className="h-10 w-10 rounded border-0 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={settings.panelColor || ""}
+                      onChange={(e) => handleChange("panelColor", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Background Image */}
+            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                <ImageIcon size={20} style={{ color: theme.primaryColor }} />
+                Background Image
+              </h2>
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Image URL (Optional)</label>
+                <input
+                  type="text"
+                  value={settings.backgroundImage || ""}
+                  onChange={(e) => handleChange("backgroundImage", e.target.value)}
+                  className={inputClass}
+                  style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                  placeholder="https://example.com/image.jpg"
+                />
+                <p className="text-xs mt-2" style={{ color: theme.textMutedColor }}>
+                  Leave empty to use the animated geometric rings (default). If provided, this image will cover the hero section.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Live Preview */}
+          <div className="lg:sticky lg:top-8 h-fit space-y-4">
+            <h2 className="flex items-center gap-2 text-lg font-semibold" style={{ color: theme.textColor }}>
+              <Monitor size={20} style={{ color: theme.primaryColor }} />
+              Live Preview
+            </h2>
+            <div className="border rounded-xl overflow-hidden shadow-2xl relative" style={{ borderColor: theme.borderColor, height: "600px" }}>
+              <div className="absolute inset-0 flex" style={{ background: settings.backgroundColor, flexDirection: settings.layout === 'split-left' ? 'row-reverse' : 'row' }}>
+                
+                {/* Hero Side */}
+                {settings.layout !== 'centered' && (
+                  <div className="flex-1 relative overflow-hidden flex flex-col p-10" style={{ background: settings.panelColor }}>
+                    {settings.backgroundImage ? (
+                      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${settings.backgroundImage})`, opacity: 0.6 }}></div>
+                    ) : (
+                      <>
+                        <div className="absolute top-10 right-10 w-40 h-40 rounded-full border-2 opacity-30" style={{ borderColor: settings.primaryColor }}></div>
+                        <div className="absolute bottom-10 left-10 w-60 h-60 rounded-full border-2 opacity-20" style={{ borderColor: settings.primaryColor }}></div>
+                      </>
+                    )}
+                    <div className="relative z-10 flex items-center gap-3 mb-auto">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: settings.primaryColor }}>
+                        <Layers size={20} color="#fff" />
+                      </div>
+                      <span className="font-bold text-xl text-white">Arise 2</span>
+                    </div>
+                    <div className="relative z-10 mt-auto mb-20">
+                      <h1 className="text-4xl font-bold text-white mb-4 leading-tight">{settings.title}</h1>
+                      <p className="text-gray-400 text-lg">{settings.subtitle}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Form Side */}
+                <div className={`flex flex-col justify-center p-10 relative z-10 ${settings.layout === 'centered' ? 'w-full max-w-md mx-auto items-center' : 'w-[400px]'}`} style={{ background: settings.layout === 'centered' ? 'transparent' : settings.backgroundColor }}>
+                  
+                  {settings.layout === 'centered' && (
+                     <div className="flex items-center gap-3 mb-10">
+                       <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: settings.primaryColor }}>
+                         <Layers size={24} color="#fff" />
+                       </div>
+                       <span className="font-bold text-3xl text-white">Arise 2</span>
+                     </div>
+                  )}
+
+                  <div className={`w-full ${settings.layout === 'centered' ? 'bg-[#0a0a10] p-8 rounded-2xl border border-white/10' : ''}`}>
+                    {settings.layout !== 'centered' && (
+                      <div className="mb-10">
+                        <h2 className="text-2xl font-bold text-white mb-2">Welcome back</h2>
+                        <p className="text-gray-400 text-sm">Sign in to your workspace</p>
+                      </div>
+                    )}
+                    
+                    <div className="space-y-4 mb-6">
+                      <div>
+                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Email Address</label>
+                        <div className="h-10 rounded-lg border border-white/10 bg-white/5 w-full"></div>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-2 block">Password</label>
+                        <div className="h-10 rounded-lg border border-white/10 bg-white/5 w-full"></div>
+                      </div>
+                    </div>
+                    
+                    <button className="w-full h-10 rounded-lg font-medium text-white flex items-center justify-center" style={{ background: settings.primaryColor }}>
+                      Sign In
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}

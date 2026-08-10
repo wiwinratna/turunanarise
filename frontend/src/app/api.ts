@@ -158,6 +158,37 @@ export async function apiGetMe(): Promise<AuthUser> {
   };
 }
 
+// ─── Settings API ───────────────────────────────────────────────────────────
+export interface BrandingSettings {
+  layout?: "split-right" | "split-left" | "centered";
+  title?: string;
+  subtitle?: string;
+  primaryColor?: string;
+  backgroundColor?: string;
+  panelColor?: string;
+  backgroundImage?: string;
+}
+
+export async function apiGetBrandingSettings(): Promise<BrandingSettings> {
+  try {
+    const res = await fetch(`${BASE_URL}/settings/branding`, {
+      headers: { "Accept": "application/json" }
+    });
+    if (!res.ok) return {};
+    const data = await res.json();
+    return data.branding || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+export async function apiUpdateBrandingSettings(settings: BrandingSettings) {
+  return fetchWithAuth("/settings/branding", {
+    method: "POST",
+    body: JSON.stringify(settings)
+  });
+}
+
 // ─── Ticketing API ────────────────────────────────────────────────────────────
 export interface Ticket {
   id: string;
