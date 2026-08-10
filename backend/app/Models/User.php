@@ -36,6 +36,8 @@ class User extends Authenticatable
         'role',
         'event_id',
         'avatar',
+        'theme',
+        'logo',
         'active',
     ];
 
@@ -59,6 +61,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'theme' => 'array',
             'active' => 'boolean',
             'role' => \App\Enums\UserRole::class,
             'event_id' => 'array',

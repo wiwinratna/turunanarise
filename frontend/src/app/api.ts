@@ -61,7 +61,9 @@ export interface AuthUser {
   email: string;
   role: "superadmin" | "admin";
   eventId: string | string[] | null;
-  avatar: string;
+  avatar?: string;
+  theme?: any;
+  logo?: string;
   active: boolean;
 }
 
@@ -95,13 +97,15 @@ export async function apiLogin(payload: LoginPayload): Promise<{ user: AuthUser;
     role: data.user.role,
     eventId: Array.isArray(rawEventId) ? rawEventId : rawEventId ? [rawEventId] : null,
     avatar: data.user.avatar,
+    theme: data.user.theme,
+    logo: data.user.logo,
     active: !!data.user.active,
   };
   
   return { user, token: data.token };
 }
 
-export async function apiUpdateProfile(payload: { name: string; email: string; avatar?: string }): Promise<AuthUser> {
+export async function apiUpdateProfile(payload: { name: string; email: string; avatar?: string; theme?: any; logo?: string }): Promise<AuthUser> {
   const res = await fetchWithAuth("/auth/me", {
     method: "PUT",
     body: JSON.stringify(payload),
@@ -114,6 +118,8 @@ export async function apiUpdateProfile(payload: { name: string; email: string; a
     role: res.role,
     eventId: Array.isArray(rawEventId) ? rawEventId : rawEventId ? [rawEventId] : null,
     avatar: res.avatar,
+    theme: res.theme,
+    logo: res.logo,
     active: !!res.active,
   };
 }
@@ -146,6 +152,8 @@ export async function apiGetMe(): Promise<AuthUser> {
     role: u.role,
     eventId: Array.isArray(rawEventId) ? rawEventId : rawEventId ? [rawEventId] : null,
     avatar: u.avatar,
+    theme: u.theme,
+    logo: u.logo,
     active: !!u.active,
   };
 }

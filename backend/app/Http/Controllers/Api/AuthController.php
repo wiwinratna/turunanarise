@@ -60,14 +60,24 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'avatar' => 'nullable|string'
+            'avatar' => 'nullable|string',
+            'theme' => 'nullable|array',
+            'logo' => 'nullable|string'
         ]);
 
-        $user->update([
+        $updateData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'avatar' => $validated['avatar'] ?? $user->avatar,
-        ]);
+        ];
+        if (isset($validated['theme'])) {
+            $updateData['theme'] = $validated['theme'];
+        }
+        if (array_key_exists('logo', $validated)) {
+            $updateData['logo'] = $validated['logo'];
+        }
+
+        $user->update($updateData);
 
         return response()->json($user);
     }

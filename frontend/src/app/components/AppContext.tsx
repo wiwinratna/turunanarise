@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
 import type { AuthUser, EventData, MasterCategory, MasterFunction, MasterCountry, CardData, ParticipantData } from "../api";
 import {
   getToken, clearToken, apiGetMe, apiGetEvents, apiGetCategories,
@@ -454,23 +454,59 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const logoKey = getLogoKey(currentUser);
-      setSidebarLogoState(localStorage.getItem(logoKey));
+      if (currentUser?.logo) {
+        setSidebarLogoState(currentUser.logo);
+      } else {
+        const logoKey = getLogoKey(currentUser);
+        setSidebarLogoState(localStorage.getItem(logoKey));
+      }
       
-      const themeKey = getThemeKey(currentUser);
-      const savedTheme = localStorage.getItem(themeKey);
-      if (savedTheme) {
-        const parsed = JSON.parse(savedTheme);
-        if (parsed && typeof parsed === "object" && "sidebarColor" in parsed) {
-          setThemeState(parsed);
+      if (currentUser?.theme) {
+        setThemeState(currentUser.theme);
+      } else {
+        const themeKey = getThemeKey(currentUser);
+        const savedTheme = localStorage.getItem(themeKey);
+        if (savedTheme) {
+          const parsed = JSON.parse(savedTheme);
+          if (parsed && typeof parsed === "object" && "sidebarColor" in parsed) {
+            setThemeState(parsed);
+          } else {
+            setThemeState(PRESET_THEMES.midnight);
+          }
         } else {
           setThemeState(PRESET_THEMES.midnight);
         }
-      } else {
-        setThemeState(PRESET_THEMES.midnight);
       }
     } catch(e) {}
   }, [currentUser, getLogoKey, getThemeKey]);
+
+  const previousThemeRef = useRef(theme);
+  const previousLogoRef = useRef(sidebarLogo);
+
+  useEffect(() => {
+    if (!currentUser || !isLoggedIn) return;
+    
+    if (JSON.stringify(theme) === JSON.stringify(previousThemeRef.current) && sidebarLogo === previousLogoRef.current) {
+        return;
+    }
+
+    const tId = setTimeout(() => {
+      import("../api").then(({ apiUpdateProfile }) => {
+        apiUpdateProfile({
+          name: currentUser.name,
+          email: currentUser.email,
+          avatar: currentUser.avatar,
+          theme: theme,
+          logo: sidebarLogo || ""
+        }).then(() => {
+           previousThemeRef.current = theme;
+           previousLogoRef.current = sidebarLogo;
+        }).catch(console.error);
+      });
+    }, 1500);
+    
+    return () => clearTimeout(tId);
+  }, [theme, sidebarLogo, currentUser, isLoggedIn]);
 
   const setSidebarLogo = useCallback((logo: string | null) => {
     setSidebarLogoState(logo);
