@@ -18,44 +18,50 @@ class SettingsController extends Controller
 
     public function updateBranding(Request $request)
     {
-        // Only superadmin
-        $role = $request->user()->role;
-        $roleValue = $role instanceof \BackedEnum ? $role->value : $role;
-        if ($roleValue !== 'superadmin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        try {
+            // Only superadmin
+            $role = $request->user()->role;
+            $roleValue = $role instanceof \BackedEnum ? $role->value : $role;
+            if ($roleValue !== 'superadmin') {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+
+            $validated = $request->validate([
+                'layout' => 'nullable|string',
+                'title' => 'nullable|string',
+                'subtitle' => 'nullable|string',
+                'primaryColor' => 'nullable|string',
+                'backgroundColor' => 'nullable|string',
+                'panelColor' => 'nullable|string',
+                'textColor' => 'nullable|string',
+                'backgroundImage' => 'nullable|string',
+                'logoUrl' => 'nullable|string',
+                'logoText' => 'nullable|string',
+            ]);
+
+            $setting = Setting::firstOrCreate(
+                ['key' => 'login_branding'],
+                ['value' => []]
+            );
+
+            $currentValue = is_array($setting->value) ? $setting->value : (json_decode($setting->value, true) ?: []);
+            if (!is_array($currentValue)) {
+                $currentValue = [];
+            }
+            $newValue = array_merge($currentValue, $validated);
+
+            $setting->value = $newValue;
+            $setting->save();
+
+            return response()->json([
+                'message' => 'Branding settings updated successfully',
+                'branding' => $setting->value
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Debug Error: ' . $e->getMessage() . ' on line ' . $e->getLine()
+            ], 500);
         }
-
-        $validated = $request->validate([
-            'layout' => 'nullable|string',
-            'title' => 'nullable|string',
-            'subtitle' => 'nullable|string',
-            'primaryColor' => 'nullable|string',
-            'backgroundColor' => 'nullable|string',
-            'panelColor' => 'nullable|string',
-            'textColor' => 'nullable|string',
-            'backgroundImage' => 'nullable|string',
-            'logoUrl' => 'nullable|string',
-            'logoText' => 'nullable|string',
-        ]);
-
-        $setting = Setting::firstOrCreate(
-            ['key' => 'login_branding'],
-            ['value' => []]
-        );
-
-        $currentValue = is_array($setting->value) ? $setting->value : (json_decode($setting->value, true) ?: []);
-        if (!is_array($currentValue)) {
-            $currentValue = [];
-        }
-        $newValue = array_merge($currentValue, $validated);
-
-        $setting->value = $newValue;
-        $setting->save();
-
-        return response()->json([
-            'message' => 'Branding settings updated successfully',
-            'branding' => $setting->value
-        ]);
     }
 
     public function uploadImage(Request $request)
