@@ -335,7 +335,7 @@ interface AppContextType {
 
 const getInitialTheme = (): ThemeConfig => {
   try {
-    const saved = localStorage.getItem("cardforge_theme");
+    const saved = localStorage.getItem("cardforge_last_theme") || localStorage.getItem("cardforge_theme");
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed && typeof parsed === "object" && "sidebarColor" in parsed) {
@@ -344,6 +344,13 @@ const getInitialTheme = (): ThemeConfig => {
     }
   } catch (e) {}
   return PRESET_THEMES.midnight;
+};
+
+const getInitialLogo = (): string | null => {
+  try {
+    return localStorage.getItem("cardforge_last_logo") || localStorage.getItem("cardforge_logo");
+  } catch (e) {}
+  return null;
 };
 
 const defaultTheme = PRESET_THEMES.midnight;
@@ -441,6 +448,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       const key = getThemeKey(currentUser);
       localStorage.setItem(key, JSON.stringify(t));
+      localStorage.setItem("cardforge_last_theme", JSON.stringify(t));
     } catch (e) {}
   }, [currentUser, getThemeKey]);
   const getLogoKey = useCallback((user: AuthUser | null) => {
@@ -450,19 +458,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return eventId ? `cardforge_logo_${eventId}` : "cardforge_logo";
   }, []);
 
-  const [sidebarLogo, setSidebarLogoState] = useState<string | null>(null);
+  const [sidebarLogo, setSidebarLogoState] = useState<string | null>(getInitialLogo);
 
   useEffect(() => {
     try {
       if (currentUser?.logo) {
         setSidebarLogoState(currentUser.logo);
+        localStorage.setItem("cardforge_last_logo", currentUser.logo);
       } else {
         const logoKey = getLogoKey(currentUser);
-        setSidebarLogoState(localStorage.getItem(logoKey));
+        const l = localStorage.getItem(logoKey);
+        setSidebarLogoState(l);
+        if (l) localStorage.setItem("cardforge_last_logo", l);
       }
       
       if (currentUser?.theme) {
         setThemeState(currentUser.theme);
+        localStorage.setItem("cardforge_last_theme", JSON.stringify(currentUser.theme));
       } else {
         const themeKey = getThemeKey(currentUser);
         const savedTheme = localStorage.getItem(themeKey);
@@ -470,6 +482,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           const parsed = JSON.parse(savedTheme);
           if (parsed && typeof parsed === "object" && "sidebarColor" in parsed) {
             setThemeState(parsed);
+            localStorage.setItem("cardforge_last_theme", savedTheme);
           } else {
             setThemeState(PRESET_THEMES.midnight);
           }
@@ -514,8 +527,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const key = getLogoKey(currentUser);
       if (logo) {
         localStorage.setItem(key, logo);
+        localStorage.setItem("cardforge_last_logo", logo);
       } else {
         localStorage.removeItem(key);
+        localStorage.removeItem("cardforge_last_logo");
       }
     } catch(e) {}
   }, [currentUser, getLogoKey]);
