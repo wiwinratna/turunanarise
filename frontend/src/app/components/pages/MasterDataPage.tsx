@@ -6,7 +6,7 @@ import {
   apiCreateFunction, apiUpdateFunction, apiDeleteFunction,
   apiCreateCountry, apiUpdateCountry, apiDeleteCountry,
   ParticipantData, apiDeleteParticipant, apiUpdateParticipant,
-  apiGetEventLayout
+  apiGetEventLayout, apiGetParticipants
 } from "../../api";
 import { WORLD_COUNTRIES } from "../../utils/countriesList";
 import { toast } from "sonner";

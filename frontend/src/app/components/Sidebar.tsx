@@ -129,7 +129,7 @@ export function Sidebar() {
       }}>
         {sidebarLogo ? (
           <div className="relative group" style={{ flexShrink: 0 }}>
-            <img src={sidebarLogo} alt="Logo" style={{ width: 34, height: 34, borderRadius: 6, objectFit: "cover" }} />
+            <img src={sidebarLogo} alt="Logo" style={{ maxWidth: 100, height: 34, borderRadius: 6, objectFit: "contain" }} />
             {!collapsed && (
               <button onClick={() => setSidebarLogo(null)}
                 style={{ position: "absolute", top: -4, right: -4, width: 16, height: 16, borderRadius: "50%", background: "#e53e5e", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -148,26 +148,31 @@ export function Sidebar() {
         <AnimatePresence>
           {!collapsed && (
             <motion.div initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: 160 }} exit={{ opacity: 0, width: 0 }}
-              style={{ overflow: "hidden", flexShrink: 0 }}>
-              <div style={{ 
-                fontFamily: "'Poppins', sans-serif", 
-                fontWeight: 700, 
-                fontSize: getBrandName().length > 18 ? 12 : 15, 
-                color: theme.textColor, 
-                whiteSpace: "normal", 
-                overflow: "hidden", 
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                lineHeight: 1.2
-              }}>
-                {getBrandName()}
+              style={{ overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center", gap: 10 }}>
+              {sidebarLogo && (
+                <div style={{ width: 1, height: 24, background: theme.borderColor, flexShrink: 0 }} />
+              )}
+              <div>
+                <div style={{ 
+                  fontFamily: "'Poppins', sans-serif", 
+                  fontWeight: 700, 
+                  fontSize: getBrandName().length > 18 ? 12 : 15, 
+                  color: theme.textColor, 
+                  whiteSpace: "normal", 
+                  overflow: "hidden", 
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  lineHeight: 1.2
+                }}>
+                  {getBrandName()}
+                </div>
+                <button onClick={() => fileRef.current?.click()}
+                  style={{ fontSize: 10, color: theme.textMutedColor, background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: 3 }}>
+                  <Upload size={8} />
+                  {sidebarLogo ? "Change logo" : "Upload logo"}
+                </button>
               </div>
-              <button onClick={() => fileRef.current?.click()}
-                style={{ fontSize: 10, color: theme.textMutedColor, background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: 3 }}>
-                <Upload size={8} />
-                {sidebarLogo ? "Change logo" : "Upload logo"}
-              </button>
             </motion.div>
           )}
         </AnimatePresence>
