@@ -82,21 +82,12 @@ class SettingsController extends Controller
         // Use time to make filename unique
         $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
         
-        // Store directly in public/branding so it's web-accessible without storage:link
-        $brandingDir = public_path('branding');
-        if (!is_dir($brandingDir)) {
-            mkdir($brandingDir, 0755, true);
-        }
-        $moved = $file->move($brandingDir, $filename);
+        // Store using public disk - same approach as chat_attachments which works on this server
+        $path = $file->storeAs('branding', $filename, 'public');
         
-        // Build the URL using the incoming request's domain
-        $baseUrl = $request->getSchemeAndHttpHost();
-        $url = $baseUrl . '/api/branding/' . $filename;
+        // Build URL using /storage/ prefix - handled by web.php route
+        $url = '/api/storage/branding/' . $filename;
         
-        return response()->json([
-            'url' => $url,
-            'debug_public_path' => $brandingDir,
-            'debug_file_exists' => file_exists($brandingDir . '/' . $filename),
-        ]);
+        return response()->json(['url' => $url]);
     }
 }
