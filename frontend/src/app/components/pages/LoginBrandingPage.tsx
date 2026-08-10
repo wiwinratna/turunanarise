@@ -216,21 +216,33 @@ export function LoginBrandingPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Custom Logo URL (Optional)</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={settings.logoUrl || ""}
-                        onChange={(e) => handleChange("logoUrl", e.target.value)}
-                        className={inputClass}
-                        style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                        placeholder="https://example.com/logo.png"
-                      />
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Custom Logo</label>
+                    {settings.logoUrl ? (
+                      <div className="flex items-center justify-between p-3 rounded-lg border" style={{ borderColor: theme.borderColor, background: theme.inputColor }}>
+                        <div className="flex items-center gap-3">
+                          <img src={settings.logoUrl} alt="Logo" className="h-8 max-w-[100px] object-contain" />
+                          <span className="text-sm truncate max-w-[100px]" style={{ color: theme.textColor }}>Uploaded Logo</span>
+                        </div>
+                        <button 
+                          onClick={() => handleChange("logoUrl", "")}
+                          className="text-red-500 hover:text-red-600 text-sm font-medium transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
                       <label 
-                        className="flex items-center justify-center px-4 rounded-lg cursor-pointer transition-colors"
-                        style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingLogo ? 0.7 : 1 }}
+                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed cursor-pointer transition-all hover:opacity-80"
+                        style={{ borderColor: theme.primaryColor, color: theme.primaryColor, background: `${theme.primaryColor}10` }}
                       >
-                        <Upload size={18} />
+                        {uploadingLogo ? (
+                          <div className="animate-spin h-5 w-5 border-2 rounded-full border-t-transparent" style={{ borderColor: theme.primaryColor }}></div>
+                        ) : (
+                          <>
+                            <Upload size={18} />
+                            <span className="text-sm font-medium">Upload Logo (PNG/JPG)</span>
+                          </>
+                        )}
                         <input 
                           type="file" 
                           accept="image/*" 
@@ -239,7 +251,7 @@ export function LoginBrandingPage() {
                           disabled={uploadingLogo} 
                         />
                       </label>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -335,32 +347,45 @@ export function LoginBrandingPage() {
                   Background Image
                 </h2>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Image URL (Optional)</label>
-                  <div className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={settings.backgroundImage || ""}
-                      onChange={(e) => handleChange("backgroundImage", e.target.value)}
-                      className={inputClass}
-                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                      placeholder="https://example.com/image.jpg"
-                    />
-                    <label 
-                      className="flex items-center justify-center px-4 rounded-lg cursor-pointer transition-colors"
-                      style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingBg ? 0.7 : 1 }}
-                    >
-                      <Upload size={18} />
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={(e) => handleFileUpload(e, 'backgroundImage')} 
-                        disabled={uploadingBg} 
-                      />
-                    </label>
-                  </div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Background Media</label>
+                  {settings.backgroundImage ? (
+                    <div className="flex flex-col gap-2 mb-2">
+                      <div className="flex items-center justify-between p-3 rounded-lg border" style={{ borderColor: theme.borderColor, background: theme.inputColor }}>
+                        <span className="text-sm truncate max-w-[200px]" style={{ color: theme.textColor }}>Media Uploaded</span>
+                        <button 
+                          onClick={() => handleChange("backgroundImage", "")}
+                          className="text-red-500 hover:text-red-600 text-sm font-medium transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mb-2">
+                      <label 
+                        className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-dashed cursor-pointer transition-all hover:opacity-80"
+                        style={{ borderColor: theme.primaryColor, color: theme.primaryColor, background: `${theme.primaryColor}10` }}
+                      >
+                        {uploadingBg ? (
+                          <div className="animate-spin h-5 w-5 border-2 rounded-full border-t-transparent" style={{ borderColor: theme.primaryColor }}></div>
+                        ) : (
+                          <>
+                            <Upload size={18} />
+                            <span className="text-sm font-medium">Upload Image or Video</span>
+                          </>
+                        )}
+                        <input 
+                          type="file" 
+                          accept="image/*,video/mp4,video/webm" 
+                          className="hidden" 
+                          onChange={(e) => handleFileUpload(e, 'backgroundImage')} 
+                          disabled={uploadingBg} 
+                        />
+                      </label>
+                    </div>
+                  )}
                   <p className="text-xs" style={{ color: theme.textMutedColor }}>
-                    Leave empty to use the animated geometric rings (default). If provided, this image will cover the hero section.
+                    Leave empty to use default animations. Supports PNG, JPG, MP4, WEBM (Max 20MB).
                   </p>
                 </div>
               </div>
@@ -382,7 +407,13 @@ export function LoginBrandingPage() {
                 {settings.layout !== 'centered' && (
                   <div className="flex-1 relative overflow-hidden flex flex-col p-10" style={{ background: settings.panelColor }}>
                     {settings.backgroundImage ? (
-                      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${settings.backgroundImage})`, opacity: 0.6 }}></div>
+                      settings.backgroundImage.match(/\.(mp4|webm)$/i) ? (
+                        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover" style={{ opacity: 0.6 }}>
+                          <source src={settings.backgroundImage} type={`video/${settings.backgroundImage.split('.').pop()}`} />
+                        </video>
+                      ) : (
+                        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${settings.backgroundImage})`, opacity: 0.6 }}></div>
+                      )
                     ) : (
                       <>
                         <div className="absolute top-10 right-10 w-40 h-40 rounded-full border-2 opacity-30" style={{ borderColor: settings.primaryColor }}></div>

@@ -74,7 +74,7 @@ class SettingsController extends Controller
         }
 
         $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,webp,mp4,webm|max:20480', // Allow up to 20MB for videos
         ]);
 
         $file = $request->file('file');

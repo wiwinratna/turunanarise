@@ -57,9 +57,15 @@ export function LoginPage() {
       {layoutStyle !== "centered" && (
         <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden"
           style={{ background: panelColor }}>
-          {/* Subtle mesh gradient background */}
+          {/* Subtle mesh gradient background or image/video */}
           {brandingSettings?.backgroundImage ? (
-            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brandingSettings.backgroundImage})`, opacity: 0.6 }} />
+            brandingSettings.backgroundImage.match(/\.(mp4|webm)$/i) ? (
+              <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover" style={{ opacity: 0.6 }}>
+                <source src={brandingSettings.backgroundImage} type={`video/${brandingSettings.backgroundImage.split('.').pop()}`} />
+              </video>
+            ) : (
+              <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brandingSettings.backgroundImage})`, opacity: 0.6 }} />
+            )
           ) : (
             <div className="absolute inset-0 opacity-40"
               style={{
