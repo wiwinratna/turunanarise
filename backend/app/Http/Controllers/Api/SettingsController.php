@@ -79,13 +79,19 @@ class SettingsController extends Controller
 
         $file = $request->file('file');
         
-        // Use time to make filename unique and avoid overwriting instantly
+        // Use time to make filename unique
         $filename = time() . '_' . $file->getClientOriginalName();
-        $path = $file->storeAs('public/branding', $filename);
         
-        // Use the incoming request domain to build URL - avoids APP_URL mismatch
+        // Store directly in public/branding so it's web-accessible without storage:link
+        $brandingDir = public_path('branding');
+        if (!is_dir($brandingDir)) {
+            mkdir($brandingDir, 0755, true);
+        }
+        $file->move($brandingDir, $filename);
+        
+        // Build the URL using the incoming request's domain
         $baseUrl = $request->getSchemeAndHttpHost();
-        $url = $baseUrl . '/api/storage/branding/' . $filename;
+        $url = $baseUrl . '/api/branding/' . $filename;
         
         return response()->json(['url' => $url]);
     }
