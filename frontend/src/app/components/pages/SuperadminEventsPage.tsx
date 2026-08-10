@@ -280,7 +280,7 @@ export function SuperadminEventsPage() {
                     <label style={labelStyle}>COUNTRY</label>
                     <select value={form.countryId ?? ""} onChange={e => setForm(f => ({ ...f, countryId: e.target.value }))} style={{ ...inputStyle, cursor: "pointer" }}>
                       <option value="">Select Country</option>
-                      {countries.map(c => <option key={c.id} value={c.id}>{c.flag} {c.name}</option>)}
+                      {countries.filter(c => !c.eventId).map(c => <option key={c.id} value={c.id}>{c.flag} {c.name}</option>)}
                     </select>
                   </div>
                   <div>
