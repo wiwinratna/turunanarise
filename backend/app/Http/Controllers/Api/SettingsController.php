@@ -83,8 +83,9 @@ class SettingsController extends Controller
         $filename = time() . '_' . $file->getClientOriginalName();
         $path = $file->storeAs('public/branding', $filename);
         
-        // Format the URL as a relative path so it doesn't break if APP_URL is wrong in .env
-        $url = '/api/storage/branding/' . $filename;
+        // Use the incoming request domain to build URL - avoids APP_URL mismatch
+        $baseUrl = $request->getSchemeAndHttpHost();
+        $url = $baseUrl . '/api/storage/branding/' . $filename;
         
         return response()->json(['url' => $url]);
     }
