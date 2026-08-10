@@ -106,11 +106,7 @@ export async function apiUpdateProfile(payload: { name: string; email: string; a
     method: "PUT",
     body: JSON.stringify(payload),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to update profile");
-  }
-  return res.json();
+  return res;
 }
 
 export async function apiUpdatePassword(payload: { current_password: string; new_password: string; new_password_confirmation: string }): Promise<{ message: string }> {
@@ -118,11 +114,7 @@ export async function apiUpdatePassword(payload: { current_password: string; new
     method: "PUT",
     body: JSON.stringify(payload),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to update password");
-  }
-  return res.json();
+  return res;
 }
 
 export async function apiLogout() {
