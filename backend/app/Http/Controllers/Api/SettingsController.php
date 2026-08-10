@@ -31,6 +31,8 @@ class SettingsController extends Controller
             'backgroundColor' => 'nullable|string',
             'panelColor' => 'nullable|string',
             'backgroundImage' => 'nullable|string',
+            'logoUrl' => 'nullable|string',
+            'logoText' => 'nullable|string',
         ]);
 
         $setting = Setting::firstOrCreate(

@@ -18,6 +18,8 @@ export function LoginBrandingPage() {
     backgroundColor: "#050509",
     panelColor: "#0a0a10",
     backgroundImage: "",
+    logoUrl: "",
+    logoText: "Arise 2"
   });
 
   useEffect(() => {
@@ -166,6 +168,38 @@ export function LoginBrandingPage() {
               </div>
             </div>
 
+            {/* Logo Section */}
+            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                <ImageIcon size={20} style={{ color: theme.primaryColor }} />
+                Logo Settings
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Logo Text</label>
+                  <input
+                    type="text"
+                    value={settings.logoText ?? "Arise 2"}
+                    onChange={(e) => handleChange("logoText", e.target.value)}
+                    className={inputClass}
+                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    placeholder="Arise 2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Custom Logo URL (Optional)</label>
+                  <input
+                    type="text"
+                    value={settings.logoUrl || ""}
+                    onChange={(e) => handleChange("logoUrl", e.target.value)}
+                    className={inputClass}
+                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    placeholder="https://example.com/logo.png"
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Colors Section */}
             <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
               <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
@@ -294,10 +328,16 @@ export function LoginBrandingPage() {
                       </>
                     )}
                     <div className="relative z-10 flex items-center gap-3 mb-auto">
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: settings.primaryColor }}>
-                        <Layers size={20} color="#fff" />
-                      </div>
-                      <span className="font-bold text-xl text-white">Arise 2</span>
+                      {settings.logoUrl ? (
+                        <img src={settings.logoUrl} alt="Logo" className="max-h-10 max-w-full" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: settings.primaryColor }}>
+                          <Layers size={20} color="#fff" />
+                        </div>
+                      )}
+                      {!settings.logoUrl && (
+                        <span className="font-bold text-xl" style={{ color: settings.textColor || "#ffffff" }}>{settings.logoText || "Arise 2"}</span>
+                      )}
                     </div>
                     <div className="relative z-10 mt-auto mb-20">
                       <h1 className="text-4xl font-bold mb-4 leading-tight" style={{ color: settings.textColor || "#ffffff" }}>{settings.title}</h1>
@@ -311,10 +351,16 @@ export function LoginBrandingPage() {
                   
                   {settings.layout === 'centered' && (
                      <div className="flex items-center gap-3 mb-10">
-                       <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: settings.primaryColor }}>
-                         <Layers size={24} color="#fff" />
-                       </div>
-                       <span className="font-bold text-3xl text-white">Arise 2</span>
+                       {settings.logoUrl ? (
+                         <img src={settings.logoUrl} alt="Logo" className="max-h-12 max-w-full" />
+                       ) : (
+                         <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: settings.primaryColor }}>
+                           <Layers size={24} color="#fff" />
+                         </div>
+                       )}
+                       {!settings.logoUrl && (
+                         <span className="font-bold text-3xl" style={{ color: settings.textColor || "#ffffff" }}>{settings.logoText || "Arise 2"}</span>
+                       )}
                      </div>
                   )}
 

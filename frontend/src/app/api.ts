@@ -168,6 +168,8 @@ export interface BrandingSettings {
   backgroundColor?: string;
   panelColor?: string;
   backgroundImage?: string;
+  logoUrl?: string;
+  logoText?: string;
 }
 
 export async function apiGetBrandingSettings(): Promise<BrandingSettings> {

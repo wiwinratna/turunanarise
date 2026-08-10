@@ -70,10 +70,16 @@ export function LoginPage() {
 
         <div className="relative z-10 flex flex-col h-full" style={{ padding: "48px 64px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: "auto" }}>
-            <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${primaryColor}, #5a3dcc)`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 12px ${primaryColor}40` }}>
-              <Layers size={16} color="#fff" />
-            </div>
-            <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 18, color: "#fff", letterSpacing: "-0.02em" }}>Arise 2</span>
+            {brandingSettings?.logoUrl ? (
+              <img src={brandingSettings.logoUrl} alt="Logo" style={{ maxHeight: 32, maxWidth: "100%" }} />
+            ) : (
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${primaryColor}, #5a3dcc)`, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 4px 12px ${primaryColor}40` }}>
+                <Layers size={16} color="#fff" />
+              </div>
+            )}
+            {!brandingSettings?.logoUrl && (
+              <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 18, color: textColor, letterSpacing: "-0.02em" }}>{brandingSettings?.logoText || "Arise 2"}</span>
+            )}
           </div>
 
           {!brandingSettings?.backgroundImage && (
@@ -134,8 +140,14 @@ export function LoginPage() {
         <motion.div initial={{ opacity: 0, y: layoutStyle === "centered" ? 16 : 0, x: layoutStyle === "centered" ? 0 : (layoutStyle === "split-left" ? -16 : 16) }} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: 0.35 }} style={{ width: "100%", maxWidth: 360, background: layoutStyle === "centered" ? panelColor : "transparent", padding: layoutStyle === "centered" ? "40px" : 0, borderRadius: layoutStyle === "centered" ? 16 : 0, border: layoutStyle === "centered" ? "1px solid rgba(255,255,255,0.1)" : "none" }}>
           {/* Mobile logo or Centered Logo */}
           <div className={`flex items-center gap-3 mb-8 ${layoutStyle === "centered" ? "justify-center mb-12" : "lg:hidden"}`}>
-            <div style={{ width: layoutStyle === "centered" ? 40 : 30, height: layoutStyle === "centered" ? 40 : 30, borderRadius: R, background: primaryColor, display: "flex", alignItems: "center", justifyContent: "center" }}><Layers size={layoutStyle === "centered" ? 20 : 14} color="#fff" /></div>
-            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: layoutStyle === "centered" ? 24 : 16, color: "#f0f0fa" }}>Arise 2</span>
+            {brandingSettings?.logoUrl ? (
+              <img src={brandingSettings.logoUrl} alt="Logo" style={{ maxHeight: layoutStyle === "centered" ? 48 : 32, maxWidth: "100%" }} />
+            ) : (
+              <div style={{ width: layoutStyle === "centered" ? 40 : 30, height: layoutStyle === "centered" ? 40 : 30, borderRadius: R, background: primaryColor, display: "flex", alignItems: "center", justifyContent: "center" }}><Layers size={layoutStyle === "centered" ? 20 : 14} color="#fff" /></div>
+            )}
+            {!brandingSettings?.logoUrl && (
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: layoutStyle === "centered" ? 24 : 16, color: textColor }}>{brandingSettings?.logoText || "Arise 2"}</span>
+            )}
           </div>
 
           {layoutStyle !== "centered" ? (
