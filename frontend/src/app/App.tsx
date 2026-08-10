@@ -2,15 +2,68 @@ import { AppProvider, useApp } from "./components/AppContext";
 import { LoginPage } from "./components/LoginPage";
 import { DashboardLayout } from "./components/DashboardLayout";
 import { Toaster } from "./components/ui/sonner";
+import { motion } from "motion/react";
 
 function AppInner() {
-  const { isLoggedIn, isInitializingAuth } = useApp();
+  const { isLoggedIn, isInitializingAuth, theme, sidebarLogo } = useApp();
   
   if (isInitializingAuth) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', background: '#0b0b12' }}>
-        <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid rgba(124, 92, 252, 0.2)', borderTopColor: '#7c5cfc', animation: 'spin 1s linear infinite' }} />
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', background: theme.backgroundColor }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}
+        >
+          {sidebarLogo ? (
+             <motion.img 
+                src={sidebarLogo} 
+                alt="Logo" 
+                style={{ height: 60, objectFit: 'contain' }}
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+             />
+          ) : (
+            <motion.div
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: '25%',
+                background: `linear-gradient(135deg, ${theme.primaryColor}, ${theme.accentColor || theme.primaryColor})`,
+                boxShadow: `0 0 30px ${theme.primaryColor}40`,
+              }}
+              animate={{ 
+                rotate: 360,
+                borderRadius: ["25%", "50%", "25%"]
+              }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            />
+          )}
+          <motion.div style={{ display: 'flex', gap: 6 }}>
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  backgroundColor: theme.primaryColor,
+                }}
+                animate={{
+                  y: ["0%", "-100%", "0%"],
+                  opacity: [0.3, 1, 0.3]
+                }}
+                transition={{
+                  duration: 0.8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: i * 0.15
+                }}
+              />
+            ))}
+          </motion.div>
+        </motion.div>
       </div>
     );
   }
