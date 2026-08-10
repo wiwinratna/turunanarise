@@ -46,7 +46,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tickets/{id}/messages', [TicketController::class, 'storeMessage']);
 
     // Branding
-    Route::get('/settings/branding', [SettingsController::class, 'getBranding']);
     Route::post('/settings/branding', [SettingsController::class, 'updateBranding']);
     Route::post('/settings/upload', [SettingsController::class, 'uploadImage']);
 

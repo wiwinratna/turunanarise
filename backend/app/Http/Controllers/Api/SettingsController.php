@@ -80,19 +80,23 @@ class SettingsController extends Controller
         $file = $request->file('file');
         
         // Use time to make filename unique
-        $filename = time() . '_' . $file->getClientOriginalName();
+        $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $file->getClientOriginalName());
         
         // Store directly in public/branding so it's web-accessible without storage:link
         $brandingDir = public_path('branding');
         if (!is_dir($brandingDir)) {
             mkdir($brandingDir, 0755, true);
         }
-        $file->move($brandingDir, $filename);
+        $moved = $file->move($brandingDir, $filename);
         
         // Build the URL using the incoming request's domain
         $baseUrl = $request->getSchemeAndHttpHost();
         $url = $baseUrl . '/api/branding/' . $filename;
         
-        return response()->json(['url' => $url]);
+        return response()->json([
+            'url' => $url,
+            'debug_public_path' => $brandingDir,
+            'debug_file_exists' => file_exists($brandingDir . '/' . $filename),
+        ]);
     }
 }
