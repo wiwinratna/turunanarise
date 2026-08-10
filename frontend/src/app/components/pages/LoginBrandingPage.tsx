@@ -1,26 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useApp } from "../AppContext";
-import { apiGetBrandingSettings, apiUpdateBrandingSettings, BrandingSettings } from "../../api";
+import { apiGetBrandingSettings, apiUpdateBrandingSettings, BrandingSettings, apiUploadBrandingImage, DEFAULT_BRANDING_SETTINGS } from "../../api";
 import { toast } from "sonner";
-import { Save, Layers, LayoutTemplate, Palette, Image as ImageIcon, Type, Monitor } from "lucide-react";
+import { Save, Layers, LayoutTemplate, Palette, Image as ImageIcon, Type, Monitor, Upload, RefreshCcw } from "lucide-react";
 
 export function LoginBrandingPage() {
-  const { theme } = useApp();
+  const { theme, setBrandingSettings } = useApp();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingBg, setUploadingBg] = useState(false);
 
-  const [settings, setSettings] = useState<BrandingSettings>({
-    layout: "split-right",
-    title: "Design without limits.",
-    subtitle: "The modern workspace for premium digital card creation.",
-    textColor: "#ffffff",
-    primaryColor: "#7c5cfc",
-    backgroundColor: "#050509",
-    panelColor: "#0a0a10",
-    backgroundImage: "",
-    logoUrl: "",
-    logoText: "Arise 2"
-  });
+  const [settings, setSettings] = useState<BrandingSettings>(DEFAULT_BRANDING_SETTINGS);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -46,11 +37,38 @@ export function LoginBrandingPage() {
     setLoading(true);
     try {
       await apiUpdateBrandingSettings(settings);
-      toast.success("Branding settings saved successfully.");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save branding settings");
+      setBrandingSettings(settings); // Update globally
+      toast.success("Login branding updated successfully");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to update branding settings");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    if (confirm("Are you sure you want to reset all branding settings to default?")) {
+      setSettings(DEFAULT_BRANDING_SETTINGS);
+      toast.success("Settings reset to default. Click Save Changes to apply.");
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logoUrl' | 'backgroundImage') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (type === 'logoUrl') setUploadingLogo(true);
+    else setUploadingBg(true);
+
+    try {
+      const data = await apiUploadBrandingImage(file);
+      handleChange(type, data.url);
+      toast.success("Image uploaded successfully");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to upload image");
+    } finally {
+      if (type === 'logoUrl') setUploadingLogo(false);
+      else setUploadingBg(false);
     }
   };
 
@@ -72,19 +90,29 @@ export function LoginBrandingPage() {
             <h1 className="text-2xl font-bold mb-2" style={{ color: theme.textColor }}>Login Page Branding</h1>
             <p style={{ color: theme.textMutedColor }}>Customize the appearance of the public login page.</p>
           </div>
+          <div className="flex items-center gap-3">
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors border"
+            style={{ 
+              borderColor: theme.borderColor, 
+              color: theme.textColor,
+              background: 'transparent'
+            }}
+          >
+            <RefreshCcw size={16} />
+            Reset to Default
+          </button>
           <button
             onClick={handleSave}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all"
-            style={{ 
-              background: theme.primaryColor, 
-              color: "#fff",
-              opacity: loading ? 0.7 : 1 
-            }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors"
+            style={{ background: theme.primaryColor, color: "#fff", opacity: loading ? 0.7 : 1 }}
           >
-            <Save size={18} />
+            <Save size={16} />
             {loading ? "Saving..." : "Save Changes"}
           </button>
+        </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -188,14 +216,29 @@ export function LoginBrandingPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Custom Logo URL (Optional)</label>
-                  <input
-                    type="text"
-                    value={settings.logoUrl || ""}
-                    onChange={(e) => handleChange("logoUrl", e.target.value)}
-                    className={inputClass}
-                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    placeholder="https://example.com/logo.png"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={settings.logoUrl || ""}
+                      onChange={(e) => handleChange("logoUrl", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                      placeholder="https://example.com/logo.png"
+                    />
+                    <label 
+                      className="flex items-center justify-center px-4 rounded-lg cursor-pointer transition-colors"
+                      style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingLogo ? 0.7 : 1 }}
+                    >
+                      <Upload size={18} />
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={(e) => handleFileUpload(e, 'logoUrl')} 
+                        disabled={uploadingLogo} 
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -290,15 +333,30 @@ export function LoginBrandingPage() {
               </h2>
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Image URL (Optional)</label>
-                <input
-                  type="text"
-                  value={settings.backgroundImage || ""}
-                  onChange={(e) => handleChange("backgroundImage", e.target.value)}
-                  className={inputClass}
-                  style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                  placeholder="https://example.com/image.jpg"
-                />
-                <p className="text-xs mt-2" style={{ color: theme.textMutedColor }}>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={settings.backgroundImage || ""}
+                    onChange={(e) => handleChange("backgroundImage", e.target.value)}
+                    className={inputClass}
+                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <label 
+                    className="flex items-center justify-center px-4 rounded-lg cursor-pointer transition-colors"
+                    style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingBg ? 0.7 : 1 }}
+                  >
+                    <Upload size={18} />
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={(e) => handleFileUpload(e, 'backgroundImage')} 
+                      disabled={uploadingBg} 
+                    />
+                  </label>
+                </div>
+                <p className="text-xs" style={{ color: theme.textMutedColor }}>
                   Leave empty to use the animated geometric rings (default). If provided, this image will cover the hero section.
                 </p>
               </div>

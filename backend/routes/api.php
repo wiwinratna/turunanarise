@@ -45,11 +45,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tickets/{id}/messages', [TicketController::class, 'getMessages']);
     Route::post('/tickets/{id}/messages', [TicketController::class, 'storeMessage']);
 
+    // Branding
+    Route::get('/settings/branding', [SettingsController::class, 'getBranding']);
+    Route::post('/settings/branding', [SettingsController::class, 'updateBranding']);
+    Route::post('/settings/upload', [SettingsController::class, 'uploadImage']);
+
     // Dashboard
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
-
-    // Settings
-    Route::post('/settings/branding', [SettingsController::class, 'updateBranding']);
 
     // Superadmin-only user management (except update for self which is handled by policy)
     Route::apiResource('/users', UserController::class);

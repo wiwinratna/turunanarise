@@ -51,4 +51,27 @@ class SettingsController extends Controller
             'branding' => $setting->value
         ]);
     }
+
+    public function uploadImage(Request $request)
+    {
+        // Only superadmin
+        if ($request->user()->role->value !== 'superadmin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
+        ]);
+
+        $file = $request->file('file');
+        
+        // Use time to make filename unique and avoid overwriting instantly
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $path = $file->storeAs('public/branding', $filename);
+        
+        // Format the URL as /api/storage/branding/filename so the existing route can serve it
+        $url = url('/api/storage/branding/' . $filename);
+        
+        return response()->json(['url' => $url]);
+    }
 }

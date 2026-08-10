@@ -172,6 +172,19 @@ export interface BrandingSettings {
   logoText?: string;
 }
 
+export const DEFAULT_BRANDING_SETTINGS: BrandingSettings = {
+  layout: "split-right",
+  title: "Design without limits.",
+  subtitle: "The modern workspace for premium digital card creation.",
+  textColor: "#ffffff",
+  primaryColor: "#7c5cfc",
+  backgroundColor: "#050509",
+  panelColor: "#0a0a10",
+  backgroundImage: "",
+  logoUrl: "",
+  logoText: "Arise 2"
+};
+
 export async function apiGetBrandingSettings(): Promise<BrandingSettings> {
   try {
     const res = await fetch(`${BASE_URL}/settings/branding`, {
@@ -190,6 +203,27 @@ export async function apiUpdateBrandingSettings(settings: BrandingSettings) {
     method: "POST",
     body: JSON.stringify(settings)
   });
+}
+
+export async function apiUploadBrandingImage(file: File): Promise<{url: string}> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetchWithAuth("/settings/upload", {
+    method: "POST",
+    headers: {
+      "Accept": "application/json"
+      // Note: do not set Content-Type to application/json, fetch will set multipart/form-data
+    },
+    body: formData,
+    rawResponse: true
+  });
+  
+  if (!res.ok) {
+    throw new Error("Failed to upload image");
+  }
+  
+  return res.json();
 }
 
 // ─── Ticketing API ────────────────────────────────────────────────────────────
