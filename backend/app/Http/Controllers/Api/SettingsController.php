@@ -83,8 +83,8 @@ class SettingsController extends Controller
         $filename = time() . '_' . $file->getClientOriginalName();
         $path = $file->storeAs('public/branding', $filename);
         
-        // Format the URL as /api/storage/branding/filename so the existing route can serve it
-        $url = url('/api/storage/branding/' . $filename);
+        // Format the URL as a relative path so it doesn't break if APP_URL is wrong in .env
+        $url = '/api/storage/branding/' . $filename;
         
         return response()->json(['url' => $url]);
     }
