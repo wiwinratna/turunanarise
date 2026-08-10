@@ -19,7 +19,7 @@ class SettingsController extends Controller
     public function updateBranding(Request $request)
     {
         // Only superadmin
-        if ($request->user()->role !== 'superadmin') {
+        if ($request->user()->role->value !== 'superadmin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

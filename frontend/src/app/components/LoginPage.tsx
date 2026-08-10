@@ -19,6 +19,7 @@ export function LoginPage() {
   const primaryColor = brandingSettings?.primaryColor || "#7c5cfc";
   const bgColor = brandingSettings?.backgroundColor || "#050509";
   const panelColor = brandingSettings?.panelColor || "#0a0a10";
+  const textColor = brandingSettings?.textColor || "#ffffff";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -116,11 +117,11 @@ export function LoginPage() {
           )}
 
           <div style={{ marginBottom: "auto", paddingTop: "10vh", position: "relative", zIndex: 1 }}>
-            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 56, fontWeight: 300, color: "#ffffff", lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 24 }}>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 56, fontWeight: 300, color: textColor, lineHeight: 1.1, letterSpacing: "-0.03em", marginBottom: 24 }}>
               {firstTitlePart}<br />
               <span style={{ fontWeight: 600, color: primaryColor }}>{lastTitlePart}</span>
             </h2>
-            <p style={{ color: "#8b8b9f", fontSize: 16, lineHeight: 1.6, maxWidth: 320, fontWeight: 400 }}>
+            <p style={{ color: textColor ? `${textColor}cc` : "#8b8b9f", fontSize: 16, lineHeight: 1.6, maxWidth: 320, fontWeight: 400 }}>
               {brandingSettings?.subtitle || "The modern workspace for premium digital card creation."}
             </p>
           </div>
@@ -137,13 +138,22 @@ export function LoginPage() {
             <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, fontSize: layoutStyle === "centered" ? 24 : 16, color: "#f0f0fa" }}>Arise 2</span>
           </div>
 
-          {layoutStyle !== "centered" && (
+          {layoutStyle !== "centered" ? (
             <div style={{ marginBottom: 32 }}>
-              <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 600, color: "#ffffff", letterSpacing: "-0.02em", marginBottom: 8 }}>
+              <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 600, color: textColor, letterSpacing: "-0.02em", marginBottom: 8 }}>
                 Welcome back
               </h1>
-              <p style={{ fontSize: 14, color: "#8b8b9f", margin: 0, fontWeight: 400 }}>
+              <p style={{ fontSize: 14, color: textColor ? `${textColor}cc` : "#8b8b9f", margin: 0, fontWeight: 400 }}>
                 Sign in to your workspace
+              </p>
+            </div>
+          ) : (
+            <div style={{ marginBottom: 32, textAlign: "center" }}>
+              <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 600, color: textColor, letterSpacing: "-0.02em", marginBottom: 8 }}>
+                {titleText}
+              </h1>
+              <p style={{ fontSize: 14, color: textColor ? `${textColor}cc` : "#8b8b9f", margin: 0, fontWeight: 400 }}>
+                {brandingSettings?.subtitle || "The modern workspace for premium digital card creation."}
               </p>
             </div>
           )}

@@ -13,6 +13,7 @@ export function LoginBrandingPage() {
     layout: "split-right",
     title: "Design without limits.",
     subtitle: "The modern workspace for premium digital card creation.",
+    textColor: "#ffffff",
     primaryColor: "#7c5cfc",
     backgroundColor: "#050509",
     panelColor: "#0a0a10",
@@ -208,6 +209,24 @@ export function LoginBrandingPage() {
                     />
                   </div>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Text Color</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="color"
+                      value={settings.textColor || "#ffffff"}
+                      onChange={(e) => handleChange("textColor", e.target.value)}
+                      className="h-10 w-10 rounded border-0 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={settings.textColor || ""}
+                      onChange={(e) => handleChange("textColor", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                    />
+                  </div>
+                </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Panel/Form Background Color</label>
                   <div className="flex gap-2">
@@ -259,8 +278,9 @@ export function LoginBrandingPage() {
               <Monitor size={20} style={{ color: theme.primaryColor }} />
               Live Preview
             </h2>
-            <div className="border rounded-xl overflow-hidden shadow-2xl relative" style={{ borderColor: theme.borderColor, height: "600px" }}>
-              <div className="absolute inset-0 flex" style={{ background: settings.backgroundColor, flexDirection: settings.layout === 'split-left' ? 'row-reverse' : 'row' }}>
+            <div className="border rounded-xl overflow-hidden shadow-2xl relative" style={{ borderColor: theme.borderColor, height: "400px" }}>
+              <div style={{ transform: "scale(0.6)", transformOrigin: "top left", width: "166.66%", height: "166.66%", position: "absolute", top: 0, left: 0 }}>
+                <div className="absolute inset-0 flex" style={{ background: settings.backgroundColor, flexDirection: settings.layout === 'split-left' ? 'row-reverse' : 'row' }}>
                 
                 {/* Hero Side */}
                 {settings.layout !== 'centered' && (
@@ -280,8 +300,8 @@ export function LoginBrandingPage() {
                       <span className="font-bold text-xl text-white">Arise 2</span>
                     </div>
                     <div className="relative z-10 mt-auto mb-20">
-                      <h1 className="text-4xl font-bold text-white mb-4 leading-tight">{settings.title}</h1>
-                      <p className="text-gray-400 text-lg">{settings.subtitle}</p>
+                      <h1 className="text-4xl font-bold mb-4 leading-tight" style={{ color: settings.textColor || "#ffffff" }}>{settings.title}</h1>
+                      <p className="text-lg" style={{ color: settings.textColor ? `${settings.textColor}cc` : "#8b8b9f" }}>{settings.subtitle}</p>
                     </div>
                   </div>
                 )}
@@ -299,10 +319,15 @@ export function LoginBrandingPage() {
                   )}
 
                   <div className={`w-full ${settings.layout === 'centered' ? 'bg-[#0a0a10] p-8 rounded-2xl border border-white/10' : ''}`}>
-                    {settings.layout !== 'centered' && (
+                    {settings.layout !== 'centered' ? (
                       <div className="mb-10">
-                        <h2 className="text-2xl font-bold text-white mb-2">Welcome back</h2>
-                        <p className="text-gray-400 text-sm">Sign in to your workspace</p>
+                        <h2 className="text-2xl font-bold mb-2" style={{ color: settings.textColor || "#ffffff" }}>Welcome back</h2>
+                        <p className="text-sm" style={{ color: settings.textColor ? `${settings.textColor}cc` : "#8b8b9f" }}>Sign in to your workspace</p>
+                      </div>
+                    ) : (
+                      <div className="mb-10 text-center">
+                        <h2 className="text-2xl font-bold mb-2" style={{ color: settings.textColor || "#ffffff" }}>{settings.title || "Design without limits."}</h2>
+                        <p className="text-sm" style={{ color: settings.textColor ? `${settings.textColor}cc` : "#8b8b9f" }}>{settings.subtitle || "The modern workspace for premium digital card creation."}</p>
                       </div>
                     )}
                     
@@ -321,6 +346,8 @@ export function LoginBrandingPage() {
                       Sign In
                     </button>
                   </div>
+                </div>
+
                 </div>
 
               </div>

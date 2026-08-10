@@ -163,6 +163,7 @@ export interface BrandingSettings {
   layout?: "split-right" | "split-left" | "centered";
   title?: string;
   subtitle?: string;
+  textColor?: string;
   primaryColor?: string;
   backgroundColor?: string;
   panelColor?: string;
