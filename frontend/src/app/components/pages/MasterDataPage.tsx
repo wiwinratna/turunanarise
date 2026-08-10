@@ -98,7 +98,7 @@ function DeleteModal({ name, onConfirm, onCancel, theme }: { name: string; onCon
 
 // ─── COUNTRIES TAB ────────────────────────────────────────────────────────────
 function CountriesTab({ theme }: { theme: any }) {
-  const { countries, setCountries, activeEventId } = useApp();
+  const { countries, setCountries, activeEventId, page } = useApp();
   const [search, setSearch] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -106,7 +106,10 @@ function CountriesTab({ theme }: { theme: any }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [form, setForm] = useState<Partial<MasterCountry>>({});
 
-  const filtered = countries.filter(c =>
+  const isSuperadminMode = page === "superadmin-countries";
+  const relevantCountries = countries.filter(c => isSuperadminMode ? !c.eventId : c.eventId === activeEventId);
+
+  const filtered = relevantCountries.filter(c =>
     (c.name || "").toLowerCase().includes(search.toLowerCase()) ||
     (c.code || "").toLowerCase().includes(search.toLowerCase()) ||
     (c.gymCode || "").toLowerCase().includes(search.toLowerCase())
@@ -131,7 +134,7 @@ function CountriesTab({ theme }: { theme: any }) {
         setCountries(countries.map(c => c.id === editId ? updated : c));
         toast.success("Country updated");
       } else {
-        const newCo = { ...form, id: `CTRY-${Date.now()}`, flag: form.code, eventId: activeEventId || undefined }; // Changed ID to not collide across events
+        const newCo = { ...form, id: `CTRY-${Date.now()}`, flag: form.code, eventId: isSuperadminMode ? undefined : activeEventId }; // Save as global if superadmin
         const created = await apiCreateCountry(newCo);
         setCountries([...countries, created]);
         toast.success("Country created");
@@ -559,7 +562,7 @@ function FunctionsTab({ theme }: { theme: any }) {
 import { useDebounce } from "../../hooks/useDebounce";
 import { Pagination } from "../Pagination";
 
-function ParticipantsTab({ theme }: { theme: any }) {
+function ParticipantsTab({ theme, onTotalChange }: { theme: any, onTotalChange?: (t: number) => void }) {
   const { categories, functions, activeEventId } = useApp();
   const [participants, setParticipants] = useState<ParticipantData[]>([]);
   const [loading, setLoading] = useState(false);
@@ -601,6 +604,7 @@ function ParticipantsTab({ theme }: { theme: any }) {
           setParticipants(response.data);
           setTotal(response.total);
           setLastPage(response.last_page);
+          if (onTotalChange) onTotalChange(response.total);
         }
       } catch (err: any) {
         if (isMounted) setError(err.message || "Failed to load participants");
@@ -833,18 +837,20 @@ const TABS: { id: MasterTab; label: string; icon: React.ReactNode }[] = [
 ];
 
 export function MasterDataPage() {
-  const { theme, categories, functions, countries, participants, activeEventId, events, currentUser, setActiveEventId, page, setPage } = useApp();
+  const { theme, categories, functions, countries, activeEventId, events, currentUser, setActiveEventId, page, setPage } = useApp();
   const [activeTab, setActiveTab] = useState<MasterTab>("categories");
+  const [participantsTotal, setParticipantsTotal] = useState(0);
 
   const currentEvent = events.find(e => e.id === activeEventId);
 
   const isSuperadminMode = page === "superadmin-countries";
+  const relevantCountries = countries.filter(c => isSuperadminMode ? !c.eventId : c.eventId === activeEventId);
 
   const counts: Record<MasterTab, number> = {
     categories: categories.length,
     functions: functions.length,
-    countries: countries.length,
-    participants: participants?.length || 0,
+    countries: relevantCountries.length,
+    participants: participantsTotal,
   };
 
   let visibleTabs = isSuperadminMode ? TABS.filter(t => t.id === "countries") : TABS;
@@ -919,7 +925,7 @@ export function MasterDataPage() {
             <motion.div key={isSuperadminMode ? "countries" : activeTab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }}>
               {(!isSuperadminMode && activeTab === "categories") && <CategoriesTab theme={theme} />}
               {(!isSuperadminMode && activeTab === "functions") && <FunctionsTab theme={theme} />}
-              {(!isSuperadminMode && activeTab === "participants") && <ParticipantsTab theme={theme} />}
+              {(!isSuperadminMode && activeTab === "participants") && <ParticipantsTab theme={theme} onTotalChange={setParticipantsTotal} />}
               {(isSuperadminMode || activeTab === "countries") && <CountriesTab theme={theme} />}
             </motion.div>
           </AnimatePresence>
