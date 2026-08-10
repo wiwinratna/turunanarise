@@ -318,7 +318,7 @@ export function LoginBrandingPage() {
                      </div>
                   )}
 
-                  <div className={`w-full ${settings.layout === 'centered' ? 'bg-[#0a0a10] p-8 rounded-2xl border border-white/10' : ''}`}>
+                  <div className={`w-full ${settings.layout === 'centered' ? 'p-8 rounded-2xl border border-white/10' : ''}`} style={{ background: settings.layout === 'centered' ? (settings.panelColor || '#0a0a10') : 'transparent' }}>
                     {settings.layout !== 'centered' ? (
                       <div className="mb-10">
                         <h2 className="text-2xl font-bold mb-2" style={{ color: settings.textColor || "#ffffff" }}>Welcome back</h2>

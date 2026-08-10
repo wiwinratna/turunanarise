@@ -47,7 +47,7 @@ export function LoginPage() {
 
   const inputStyle: React.CSSProperties = {
     width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-    borderRadius: 8, padding: "12px 14px", color: "#f0f0fa", fontSize: 14,
+    borderRadius: 8, padding: "12px 14px", color: textColor, fontSize: 14,
     outline: "none", boxSizing: "border-box", transition: "all 0.2s ease",
   };
 
@@ -161,7 +161,7 @@ export function LoginPage() {
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
             <div>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#8b8b9f", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>EMAIL ADDRESS</label>
+              <label style={{ fontSize: 11, fontWeight: 600, color: textColor ? `${textColor}b3` : "#8b8b9f", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>EMAIL ADDRESS</label>
               <div style={{ position: "relative" }}>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                   style={inputStyle} placeholder="name@company.com" />
@@ -170,7 +170,7 @@ export function LoginPage() {
 
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <label style={{ fontSize: 11, fontWeight: 600, color: "#8b8b9f", letterSpacing: "0.05em", display: "block", margin: 0 }}>PASSWORD</label>
+                <label style={{ fontSize: 11, fontWeight: 600, color: textColor ? `${textColor}b3` : "#8b8b9f", letterSpacing: "0.05em", display: "block" }}>PASSWORD</label>
                 <button type="button" style={{ fontSize: 11, color: "#a78bfa", background: "none", border: "none", cursor: "pointer", fontWeight: 500, padding: 0 }}>Forgot?</button>
               </div>
               <div style={{ position: "relative" }}>
