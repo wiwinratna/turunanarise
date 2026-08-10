@@ -361,7 +361,7 @@ function ParticipantsPanel({ event, onClose, hideClose }: { event: EventData; on
       toast.error("No layout template saved for this event yet. Please save a layout in the Card Editor first.");
       return;
     }
-    if (participants.length === 0) {
+    if (cards.length === 0) {
       toast.error("No participants to download.");
       return;
     }
@@ -390,9 +390,9 @@ function ParticipantsPanel({ event, onClose, hideClose }: { event: EventData; on
       format: [width, height],
     });
 
-    for (let i = 0; i < participants.length; i++) {
-      const card = participants[i];
-      setDownloadProgress(`Generating ${i + 1} of ${participants.length}: ${card.name}…`);
+    for (let i = 0; i < cards.length; i++) {
+      const card = cards[i];
+      setDownloadProgress(`Generating ${i + 1} of ${cards.length}: ${card.name}…`);
       const pd = card.participant_data as Record<string, string> | null;
 
       const layoutElements = (eventLayout.elements as any[]) || [];
@@ -463,13 +463,13 @@ function ParticipantsPanel({ event, onClose, hideClose }: { event: EventData; on
     }
 
     pdf.save(`${event.name.replace(/[^a-zA-Z0-9]/g, "_")}_all_cards.pdf`);
-    toast.success(`Downloaded ${participants.length} cards as PDF!`);
+    toast.success(`Downloaded ${cards.length} cards as PDF!`);
     setDownloadingAll(false);
     setDownloadProgress("");
   };
 
   const exportToExcel = () => {
-    if (participants.length === 0) {
+    if (cards.length === 0) {
       toast.error("No participants to export.");
       return;
     }
@@ -485,7 +485,7 @@ function ParticipantsPanel({ event, onClose, hideClose }: { event: EventData; on
     });
     html += "</tr>";
     
-    participants.forEach(card => {
+    cards.forEach(card => {
       const pd = card.participant_data as Record<string, string> | null;
       html += "<tr>";
       html += `<td>${card.name}</td>`;
