@@ -218,17 +218,11 @@ export async function apiUploadBrandingImage(file: File): Promise<{url: string}>
     method: "POST",
     headers: {
       "Accept": "application/json"
-      // Note: do not set Content-Type to application/json, fetch will set multipart/form-data
     },
-    body: formData,
-    rawResponse: true
+    body: formData
   });
   
-  if (!res.ok) {
-    throw new Error("Failed to upload image");
-  }
-  
-  return res.json();
+  return res;
 }
 
 // ─── Ticketing API ────────────────────────────────────────────────────────────
