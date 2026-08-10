@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useApp, Page } from "./AppContext";
+import { apiLogout } from "../api";
 import {
   LayoutDashboard, FileText, CreditCard, Palette, History,
   ChevronLeft, ChevronRight, Upload, X, LogOut, Database, Layers,
@@ -75,7 +76,12 @@ export function Sidebar() {
     reader.readAsDataURL(file);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await apiLogout(); // clears token from localStorage AND invalidates on server
+    } catch {
+      // Even if API call fails, still clear state
+    }
     setCurrentUser(null);
     setIsLoggedIn(false);
     setPage("login");
