@@ -115,8 +115,8 @@ export function LoginBrandingPage() {
         </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-7 space-y-6">
             {/* Layout Section */}
             <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
               <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
@@ -165,208 +165,212 @@ export function LoginBrandingPage() {
               </div>
             </div>
 
-            {/* Typography Section */}
-            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
-              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
-                <Type size={20} style={{ color: theme.primaryColor }} />
-                Content
-              </h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Hero Title</label>
-                  <input
-                    type="text"
-                    value={settings.title || ""}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    className={inputClass}
-                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    placeholder="E.g. Design without limits."
-                  />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Typography Section */}
+              <div className="p-6 rounded-xl border flex flex-col h-full" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+                <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                  <Type size={20} style={{ color: theme.primaryColor }} />
+                  Content
+                </h2>
+                <div className="space-y-4 flex-1">
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Hero Title</label>
+                    <input
+                      type="text"
+                      value={settings.title || ""}
+                      onChange={(e) => handleChange("title", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                      placeholder="E.g. Design without limits."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Hero Subtitle</label>
+                    <textarea
+                      value={settings.subtitle || ""}
+                      onChange={(e) => handleChange("subtitle", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor, minHeight: "80px" }}
+                      placeholder="E.g. The modern workspace for premium digital card creation."
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Hero Subtitle</label>
-                  <textarea
-                    value={settings.subtitle || ""}
-                    onChange={(e) => handleChange("subtitle", e.target.value)}
-                    className={inputClass}
-                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor, minHeight: "80px" }}
-                    placeholder="E.g. The modern workspace for premium digital card creation."
-                  />
+              </div>
+
+              {/* Logo Section */}
+              <div className="p-6 rounded-xl border flex flex-col h-full" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+                <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                  <ImageIcon size={20} style={{ color: theme.primaryColor }} />
+                  Logo Settings
+                </h2>
+                <div className="space-y-4 flex-1">
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Logo Text</label>
+                    <input
+                      type="text"
+                      value={settings.logoText ?? "Arise 2"}
+                      onChange={(e) => handleChange("logoText", e.target.value)}
+                      className={inputClass}
+                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                      placeholder="Arise 2"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Custom Logo URL (Optional)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={settings.logoUrl || ""}
+                        onChange={(e) => handleChange("logoUrl", e.target.value)}
+                        className={inputClass}
+                        style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                        placeholder="https://example.com/logo.png"
+                      />
+                      <label 
+                        className="flex items-center justify-center px-4 rounded-lg cursor-pointer transition-colors"
+                        style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingLogo ? 0.7 : 1 }}
+                      >
+                        <Upload size={18} />
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={(e) => handleFileUpload(e, 'logoUrl')} 
+                          disabled={uploadingLogo} 
+                        />
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Logo Section */}
-            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
-              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
-                <ImageIcon size={20} style={{ color: theme.primaryColor }} />
-                Logo Settings
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Logo Text</label>
-                  <input
-                    type="text"
-                    value={settings.logoText ?? "Arise 2"}
-                    onChange={(e) => handleChange("logoText", e.target.value)}
-                    className={inputClass}
-                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    placeholder="Arise 2"
-                  />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Colors Section */}
+              <div className="p-6 rounded-xl border flex flex-col h-full" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+                <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                  <Palette size={20} style={{ color: theme.primaryColor }} />
+                  Colors
+                </h2>
+                <div className="space-y-4 flex-1">
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Primary Color (Buttons)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={settings.primaryColor || "#7c5cfc"}
+                        onChange={(e) => handleChange("primaryColor", e.target.value)}
+                        className="h-10 w-10 rounded border-0 cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={settings.primaryColor || ""}
+                        onChange={(e) => handleChange("primaryColor", e.target.value)}
+                        className={inputClass}
+                        style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Background Color</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={settings.backgroundColor || "#050509"}
+                        onChange={(e) => handleChange("backgroundColor", e.target.value)}
+                        className="h-10 w-10 rounded border-0 cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={settings.backgroundColor || ""}
+                        onChange={(e) => handleChange("backgroundColor", e.target.value)}
+                        className={inputClass}
+                        style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Text Color</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={settings.textColor || "#ffffff"}
+                        onChange={(e) => handleChange("textColor", e.target.value)}
+                        className="h-10 w-10 rounded border-0 cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={settings.textColor || ""}
+                        onChange={(e) => handleChange("textColor", e.target.value)}
+                        className={inputClass}
+                        style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Panel/Form Background Color</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        value={settings.panelColor || "#0a0a10"}
+                        onChange={(e) => handleChange("panelColor", e.target.value)}
+                        className="h-10 w-10 rounded border-0 cursor-pointer"
+                      />
+                      <input
+                        type="text"
+                        value={settings.panelColor || ""}
+                        onChange={(e) => handleChange("panelColor", e.target.value)}
+                        className={inputClass}
+                        style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Custom Logo URL (Optional)</label>
-                  <div className="flex gap-2">
+              </div>
+
+              {/* Background Image */}
+              <div className="p-6 rounded-xl border flex flex-col h-full" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
+                <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
+                  <ImageIcon size={20} style={{ color: theme.primaryColor }} />
+                  Background Image
+                </h2>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Image URL (Optional)</label>
+                  <div className="flex gap-2 mb-2">
                     <input
                       type="text"
-                      value={settings.logoUrl || ""}
-                      onChange={(e) => handleChange("logoUrl", e.target.value)}
+                      value={settings.backgroundImage || ""}
+                      onChange={(e) => handleChange("backgroundImage", e.target.value)}
                       className={inputClass}
                       style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                      placeholder="https://example.com/logo.png"
+                      placeholder="https://example.com/image.jpg"
                     />
                     <label 
                       className="flex items-center justify-center px-4 rounded-lg cursor-pointer transition-colors"
-                      style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingLogo ? 0.7 : 1 }}
+                      style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingBg ? 0.7 : 1 }}
                     >
                       <Upload size={18} />
                       <input 
                         type="file" 
                         accept="image/*" 
                         className="hidden" 
-                        onChange={(e) => handleFileUpload(e, 'logoUrl')} 
-                        disabled={uploadingLogo} 
+                        onChange={(e) => handleFileUpload(e, 'backgroundImage')} 
+                        disabled={uploadingBg} 
                       />
                     </label>
                   </div>
+                  <p className="text-xs" style={{ color: theme.textMutedColor }}>
+                    Leave empty to use the animated geometric rings (default). If provided, this image will cover the hero section.
+                  </p>
                 </div>
-              </div>
-            </div>
-
-            {/* Colors Section */}
-            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
-              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
-                <Palette size={20} style={{ color: theme.primaryColor }} />
-                Colors
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Primary Color (Buttons)</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      value={settings.primaryColor || "#7c5cfc"}
-                      onChange={(e) => handleChange("primaryColor", e.target.value)}
-                      className="h-10 w-10 rounded border-0 cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={settings.primaryColor || ""}
-                      onChange={(e) => handleChange("primaryColor", e.target.value)}
-                      className={inputClass}
-                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Background Color</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      value={settings.backgroundColor || "#050509"}
-                      onChange={(e) => handleChange("backgroundColor", e.target.value)}
-                      className="h-10 w-10 rounded border-0 cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={settings.backgroundColor || ""}
-                      onChange={(e) => handleChange("backgroundColor", e.target.value)}
-                      className={inputClass}
-                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Text Color</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      value={settings.textColor || "#ffffff"}
-                      onChange={(e) => handleChange("textColor", e.target.value)}
-                      className="h-10 w-10 rounded border-0 cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={settings.textColor || ""}
-                      onChange={(e) => handleChange("textColor", e.target.value)}
-                      className={inputClass}
-                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    />
-                  </div>
-                </div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Panel/Form Background Color</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="color"
-                      value={settings.panelColor || "#0a0a10"}
-                      onChange={(e) => handleChange("panelColor", e.target.value)}
-                      className="h-10 w-10 rounded border-0 cursor-pointer"
-                    />
-                    <input
-                      type="text"
-                      value={settings.panelColor || ""}
-                      onChange={(e) => handleChange("panelColor", e.target.value)}
-                      className={inputClass}
-                      style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Background Image */}
-            <div className="p-6 rounded-xl border" style={{ borderColor: theme.borderColor, background: theme.cardColor }}>
-              <h2 className="flex items-center gap-2 text-lg font-semibold mb-6" style={{ color: theme.textColor }}>
-                <ImageIcon size={20} style={{ color: theme.primaryColor }} />
-                Background Image
-              </h2>
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: theme.textMutedColor }}>Image URL (Optional)</label>
-                <div className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={settings.backgroundImage || ""}
-                    onChange={(e) => handleChange("backgroundImage", e.target.value)}
-                    className={inputClass}
-                    style={{ background: theme.inputColor, color: theme.textColor, borderColor: theme.borderColor }}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <label 
-                    className="flex items-center justify-center px-4 rounded-lg cursor-pointer transition-colors"
-                    style={{ background: theme.primaryColor, color: "#fff", opacity: uploadingBg ? 0.7 : 1 }}
-                  >
-                    <Upload size={18} />
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="hidden" 
-                      onChange={(e) => handleFileUpload(e, 'backgroundImage')} 
-                      disabled={uploadingBg} 
-                    />
-                  </label>
-                </div>
-                <p className="text-xs" style={{ color: theme.textMutedColor }}>
-                  Leave empty to use the animated geometric rings (default). If provided, this image will cover the hero section.
-                </p>
               </div>
             </div>
 
           </div>
 
-          {/* Live Preview */}
-          <div className="lg:sticky lg:top-8 h-fit space-y-4">
-            <h2 className="flex items-center gap-2 text-lg font-semibold" style={{ color: theme.textColor }}>
+          {/* Right Column: Sticky Live Preview */}
+          <div className="lg:col-span-5 sticky top-8">
+            <h2 className="flex items-center gap-2 text-lg font-semibold mb-4" style={{ color: theme.textColor }}>
               <Monitor size={20} style={{ color: theme.primaryColor }} />
               Live Preview
             </h2>
