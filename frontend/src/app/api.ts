@@ -211,7 +211,7 @@ export async function apiGetTicketMessages(ticketId: string): Promise<{ticket: T
   if (res.messages) {
     res.messages = res.messages.map((m: any) => ({
       ...m,
-      attachment_url: m.attachment_url ? (m.attachment_url.startsWith('http') ? m.attachment_url : `${import.meta.env.PROD ? 'https://arise2.poyekterapan1.com/api/api' : '/api'}/file.php?path=${m.attachment_url.replace('/storage/', '')}`) : null
+      attachment_url: m.attachment_url ? (m.attachment_url.startsWith('http') ? m.attachment_url : `${BASE_URL}${m.attachment_url}`) : null
     }));
   }
   return res;
@@ -236,7 +236,7 @@ export async function apiSendTicketMessage(ticketId: string, message?: string, a
   }
   const data = await res.json();
   if (data.attachment_url) {
-    data.attachment_url = data.attachment_url.startsWith('http') ? data.attachment_url : `${import.meta.env.PROD ? 'https://arise2.poyekterapan1.com/api/api' : '/api'}/file.php?path=${data.attachment_url.replace('/storage/', '')}`;
+    data.attachment_url = data.attachment_url.startsWith('http') ? data.attachment_url : `${BASE_URL}${data.attachment_url}`;
   }
   return data;
 }
