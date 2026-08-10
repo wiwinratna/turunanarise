@@ -206,7 +206,14 @@ export async function apiSolveTicket(ticketId: string): Promise<Ticket> {
 }
 
 export async function apiGetTicketMessages(ticketId: string): Promise<{ticket: Ticket, messages: TicketMessage[]}> {
-  return fetchWithAuth(`/tickets/${ticketId}/messages`);
+  const res = await fetchWithAuth(`/tickets/${ticketId}/messages`);
+  if (res.messages) {
+    res.messages = res.messages.map((m: any) => ({
+      ...m,
+      attachment_url: m.attachment_url ? (m.attachment_url.startsWith('http') ? m.attachment_url : `${import.meta.env.PROD ? 'https://arise2.poyekterapan1.com/api/api' : '/api'}/file.php?path=${m.attachment_url.replace('/storage/', '')}`) : null
+    }));
+  }
+  return res;
 }
 
 export async function apiSendTicketMessage(ticketId: string, message?: string, attachment?: File): Promise<TicketMessage> {
@@ -226,7 +233,11 @@ export async function apiSendTicketMessage(ticketId: string, message?: string, a
     const errorData = await res.json().catch(() => null);
     throw new Error(errorData?.message || `Error: ${res.status}`);
   }
-  return res.json();
+  const data = await res.json();
+  if (data.attachment_url) {
+    data.attachment_url = data.attachment_url.startsWith('http') ? data.attachment_url : `${import.meta.env.PROD ? 'https://arise2.poyekterapan1.com/api/api' : '/api'}/file.php?path=${data.attachment_url.replace('/storage/', '')}`;
+  }
+  return data;
 }
 
 // ─── Users API (Superadmin) ─────────────────────────────────────────────────
