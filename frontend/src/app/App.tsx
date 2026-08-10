@@ -4,7 +4,17 @@ import { DashboardLayout } from "./components/DashboardLayout";
 import { Toaster } from "./components/ui/sonner";
 
 function AppInner() {
-  const { isLoggedIn } = useApp();
+  const { isLoggedIn, isInitializingAuth } = useApp();
+  
+  if (isInitializingAuth) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', background: '#0b0b12' }}>
+        <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid rgba(124, 92, 252, 0.2)', borderTopColor: '#7c5cfc', animation: 'spin 1s linear infinite' }} />
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
+
   return (
     <>
       {isLoggedIn ? <DashboardLayout /> : <LoginPage />}

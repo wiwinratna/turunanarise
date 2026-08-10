@@ -291,6 +291,7 @@ interface AppContextType {
   setPage: (p: Page) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (v: boolean) => void;
+  isInitializingAuth: boolean;
   // Auth & Role
   currentUser: AuthUser | null;
   setCurrentUser: (u: AuthUser | null) => void;
@@ -422,6 +423,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [page, setPage] = useState<Page>("login");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isInitializingAuth, setIsInitializingAuth] = useState(true);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [events, setEvents] = useState<EventData[]>([]);
@@ -558,7 +560,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           setCurrentUser(null);
           setPage("login");
         }
+      } else {
+        setIsLoggedIn(false);
       }
+      setIsInitializingAuth(false);
     };
     initAuth();
   }, []);
@@ -652,6 +657,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider value={{
       page, setPage,
       isLoggedIn, setIsLoggedIn,
+      isInitializingAuth,
       currentUser, setCurrentUser,
       users, setUsers,
       events, setEvents,
