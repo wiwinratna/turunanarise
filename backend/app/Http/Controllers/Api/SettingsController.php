@@ -19,7 +19,9 @@ class SettingsController extends Controller
     public function updateBranding(Request $request)
     {
         // Only superadmin
-        if ($request->user()->role->value !== 'superadmin') {
+        $role = $request->user()->role;
+        $roleValue = $role instanceof \BackedEnum ? $role->value : $role;
+        if ($roleValue !== 'superadmin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -30,6 +32,7 @@ class SettingsController extends Controller
             'primaryColor' => 'nullable|string',
             'backgroundColor' => 'nullable|string',
             'panelColor' => 'nullable|string',
+            'textColor' => 'nullable|string',
             'backgroundImage' => 'nullable|string',
             'logoUrl' => 'nullable|string',
             'logoText' => 'nullable|string',
@@ -40,7 +43,10 @@ class SettingsController extends Controller
             ['value' => []]
         );
 
-        $currentValue = $setting->value ?? [];
+        $currentValue = is_array($setting->value) ? $setting->value : (json_decode($setting->value, true) ?: []);
+        if (!is_array($currentValue)) {
+            $currentValue = [];
+        }
         $newValue = array_merge($currentValue, $validated);
 
         $setting->value = $newValue;
@@ -55,7 +61,9 @@ class SettingsController extends Controller
     public function uploadImage(Request $request)
     {
         // Only superadmin
-        if ($request->user()->role->value !== 'superadmin') {
+        $role = $request->user()->role;
+        $roleValue = $role instanceof \BackedEnum ? $role->value : $role;
+        if ($roleValue !== 'superadmin') {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
